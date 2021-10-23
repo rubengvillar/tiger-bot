@@ -6,11 +6,11 @@ module.exports = class extends (
 ) {
     constructor(...args) {
         super(...args, {
-            once: true,
+            once: false,
         });
     }
 
     async run(interaction) {
-        slashCommands(this.client ,interaction)
+        slashCommands(this.client, interaction);
     }
 };

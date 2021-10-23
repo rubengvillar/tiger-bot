@@ -22,15 +22,14 @@ module.exports = class Util {
     }
 
     async loadCommands() {
-        return await glob(`${this.directory}Commands/**/*.js`).then(
+        return await glob(`${this.directory}commands/**/*.js`).then(
             (commands) => {
                 let commandsList = []
-                for (const commandFile of commands) {
+                commands.map(commandFile => {
                     delete require.cache[commandFile];
                     const { name } = path.parse(commandFile);
                     const File = require(commandFile);
                     
-
                     if (!this.isClass(File))
                         throw new TypeError(
                             `Command ${name} doesn't export a class.`
@@ -40,20 +39,22 @@ module.exports = class Util {
                         throw new TypeError(
                             `Comamnd ${name} doesnt belong in Commands.`
                         );
-                    this.client.commands.set(command.name, command);
-                    commandsList.push(command.data.toJSON())
+                    this.client.globalCommands.set(command.name, command);
+                    commandsList.push(command)
 
-                    if (command.aliases.length) {
-                        for (const alias of command.aliases) {
-                            this.client.aliases.set(alias, command.name);
-                        }
-                    }
-                }
+                    // if (command.aliases.length) {
+                    //     for (const alias of command.aliases) {
+                    //         this.client.aliases.set(alias, command.name);
+                    //     }
+                    // }
+                })
 
                 this.client.on("ready", ()=>{
                     this.client.guilds.cache.map(guild => {
                         guild.commands.set(commandsList)
                     });
+                    // Register for all the guilds the bot is in
+                    // this.client.application.commands.set(arrayOfSlashCommands);
                 })
             }
         );

@@ -7,16 +7,14 @@ module.exports = class extends (
     constructor(...args) {
         super(...args, {
             aliases: ["pong"],
-            category: "Utilidad",
+            category: "Información",
             usage: "[ping]",
-            data: new SlashCommandBuilder()
-                .setName('ping')
-		        .setDescription('Muestra mi tiempo de respuesta. Espero este bien.')
+            description: "Muestra el ping del bot y la api de discord"
         });
     }
 
     async execute(interaction) {
-        interaction.reply({ content: "Pinging..." })
+        interaction.editReply({ content: "Pinging..." })
             .then(() => new Date())
             .then(async timing => {
                 await interaction.editReply({content: 'Comprobando...' })
@@ -30,7 +28,7 @@ module.exports = class extends (
                 ];
                 const response = choices[Math.floor(Math.random() * choices.length)];
                 interaction.editReply({
-                    content: `${response},Bot Latency: \`${latency}ms\`, API latency: \`${Math.round(
+                    content: `${response}, Bot Latency: \`${latency}ms\`, API latency: \`${Math.round(
                         this.client.ws.ping
                     )}ms\``
                 }

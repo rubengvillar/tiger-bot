@@ -2,21 +2,18 @@ const { isBoolean } = require("util");
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = class Command {
-    constructor(client, name, options = {}) {
+    constructor(client, name, properties = {}) {
         this.client = client;
-        this.name = options.name || name;
-        this.aliases = options.aliases || [];
-        this.description = options.data.description || "No se proporciono una descripcion.";
-        this.example = options.example || "No se a proporcionado un ejemplo";
-        this.category = options.category || "Otros.";
-        this.usage = options.usage || "No se proporciono un uso";
-        this.permBot = options.permBot || [];
-        this.permUser = options.permUser || [];
-        this.permChannel = options.permChannel || [];
-        this.data = new SlashCommandBuilder()
-		    .setName(options.data.name)
-		    .setDescription(options.data.description)
-            .setDefaultPermission(typeof options.data.default_permission === 'boolean' ? options.data.default_permission : true),
-        this.type = options.type || 'USER'
+        this.name = properties.name || name;
+        this.aliases = properties.aliases || [];
+        this.description = properties.description || "No se proporciono una descripcion.";
+        this.example = properties.example || "No se a proporcionado un ejemplo";
+        this.category = properties.category || "Otros.";
+        this.usage = properties.usage || "No se proporciono un uso";
+        this.permBot = properties.permBot || [];
+        this.permUser = properties.permUser || [];
+        this.permChannel = properties.permChannel || [];
+        this.type = properties.type || 'CHAT_INPUT'
+        this.options = properties.options || []
     }
 };

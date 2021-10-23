@@ -12,7 +12,7 @@ module.exports = class extends (
     async run() {
         console.log(
             [
-                `Loaded ${this.client.commands.size} commands!`,
+                `Loaded ${this.client.globalCommands.size} commands!`,
                 `Loaded ${this.client.events.size} events!`,
                 `Logged in as ${this.client.user.tag}`,
             ].join("\n")

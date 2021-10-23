@@ -6,12 +6,16 @@ module.exports.Bot = class Bot extends (
     constructor(token = "") {
         super({
             disableMentions: "everyone",
-            intents: [Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS],
-            partials: ['MESSAGE', 'CHANNEL', 'REACTION']
+            intents: 32767
         });
         
         this.validate(token);
         this.events = new Collection();
+        this.utils = new Utils(this);
+        this.globalCommands = new Collection();
+        this.aliases = new Collection();
+        this.utils.loadEvents()
+        this.utils.loadCommands()
     }
 
     validate(token) {
@@ -20,18 +24,9 @@ module.exports.Bot = class Bot extends (
 
         if (!token) throw new Error("Debe pasar el token para el cliente.");
         this.token = token;
-        this.utils = new Utils(this);
-        this.commands = new Collection();
-        this.aliases = new Collection();
     }
 
     async start(token = this.token) {
-        this.utils.loadEvents()
-            .then(()=> {
-                return super.login(token);
-            })
-            .then(() => {
-                return this.utils.loadCommands();
-            })
+        await super.login(token)
     }
 }
