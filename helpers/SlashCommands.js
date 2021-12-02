@@ -4,8 +4,8 @@ module.exports.slashCommands = async (client, interaction) => {
 
     const cmd = client.globalCommands.get(interaction.commandName);
     if (!cmd)
-        return interaction.editReply({ content: "An error has occured ", ephemeral: true });
-
+        return interaction.editReply({ content: "An error has occured ", ephemeral: true }).catch(() => {});
+    
     const args = [];
 
     for (let option of interaction.options.data) {
@@ -16,9 +16,20 @@ module.exports.slashCommands = async (client, interaction) => {
             });
         } else if (option.value) args.push(option.value);
     }
-    interaction.member = interaction.guild.members.cache.get(interaction.user.id);
+
+    interaction.member = await interaction.guild.members.cache.get(interaction.user.id);
+    interaction.channel = await interaction.guild.channels.cache.get(interaction.channelId);
+    
     try {
-        cmd.execute(interaction, args);
+        interaction.channel.guild.members.fetch(client.user.id)
+            .then(bot => {
+                if (!bot.permissions.has(cmd.permBot))
+                    return (bot.hasPermission('SEND_MESSAGES')) ? interaction.editReply(`Necesito los siguiente permisos \`${cmd.permBot.join(", ")}\``) : true;
+                if (!interaction.member.permissions.has(cmd.permUser)) return interaction.editReply(`"❌ Permisos insuficientes... ${cmd.permUser}"`);
+                cmd.execute(interaction, args);
+            })
+            .catch(console.error)
+        
     } catch (error) {
 		console.error(error);
 		await interaction.editReply({ content: 'There was an error while executing this command!', ephemeral: true });

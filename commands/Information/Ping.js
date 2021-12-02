@@ -9,17 +9,20 @@ module.exports = class extends (
             aliases: ["pong"],
             category: "Información",
             usage: "[ping]",
-            description: "Muestra el ping del bot y la api de discord"
+            description: "Muestra el ping del bot y la api de discord",
+            default_permission: true
         });
     }
 
     async execute(interaction) {
-        interaction.editReply({ content: "Pinging..." })
+        interaction
+            .editReply({ content: "Pinging..." })
             .then(() => new Date())
             .then(async timing => {
                 await interaction.editReply({content: 'Comprobando...' })
-                return new Date() - timing
+                return timing
             })
+            .then(timing => new Date() - timing)
             .then(latency => {
                 const choices = [
                     "¿Es este realmente mi ping?",
@@ -27,13 +30,14 @@ module.exports = class extends (
                     "¡Espero que no esté mal!",
                 ];
                 const response = choices[Math.floor(Math.random() * choices.length)];
-                interaction.editReply({
-                    content: `${response}, Bot Latency: \`${latency}ms\`, API latency: \`${Math.round(
+                return interaction.editReply(
+                    `${response}, Bot Latency: \`${latency}ms\`, API latency: \`${Math.round(
                         this.client.ws.ping
                     )}ms\``
-                }
+                
                 );
             })
+            .catch(console.error)
 
         
     }

@@ -1,5 +1,7 @@
 const { Client, Collection, Intents } = require("discord.js");
 const Utils = require("./Utils");
+const store = require("../redux/store");
+const firebase = require("../data/firebase");
 module.exports.Bot = class Bot extends (
     Client
 ) {
@@ -16,6 +18,8 @@ module.exports.Bot = class Bot extends (
         this.aliases = new Collection();
         this.utils.loadEvents()
         this.utils.loadCommands()
+        this.store = store
+        this.database = firebase
     }
 
     validate(token) {
@@ -27,6 +31,7 @@ module.exports.Bot = class Bot extends (
     }
 
     async start(token = this.token) {
-        await super.login(token)
+        await super.login(token);
+        await this.utils.loadGuilsInfo();
     }
 }

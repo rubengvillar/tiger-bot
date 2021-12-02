@@ -13,7 +13,9 @@ module.exports = class Command {
         this.permBot = properties.permBot || [];
         this.permUser = properties.permUser || [];
         this.permChannel = properties.permChannel || [];
-        this.type = properties.type || 'CHAT_INPUT'
-        this.options = properties.options || []
+        this.type = properties.type || 'CHAT_INPUT';
+        this.options = properties.options || [];
+        this.permissions = properties.permissions || { permissions: [] };
+        // this.default_permission = properties.default_permission || false;
     }
 };
