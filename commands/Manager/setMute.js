@@ -22,17 +22,17 @@ module.exports = class extends (
     }
 
     async execute(interaction, [role]) {
-        interaction.guild.roles.fetch(role)
+        return interaction.guild.roles.fetch(role)
         .then(async roleGuild => {
-            if (roleGuild) return new Error('El rol no fue encontrado')
+            if (roleGuild === undefined) { throw new Error('El rol no fue encontrado') }
+            
             return this.client.database.collection('guilds').doc(interaction.guild.id).update({
                 roleMute: roleGuild.id
             })
         })
         .then(()=> {
-            console.log(interaction.user)
             return interaction.editReply({
-                content: '\u200b',
+                content: `${interaction.user}`,
                 embeds: [new MessageEmbed()
                     .setTitle('Rol mute o sancionado actualizado')
                     .setDescription(`El rol añadido es: <@&${role}>`)
