@@ -1,5 +1,6 @@
 // const { MessageMenu, MessageMenuOption } = require("discord-buttons");
 const { MessageEmbed, MessageButton, MessageActionRow } = require("discord.js");
+const { addInteractionsChannels, removeInteractionsChannels, updateInteractionsChannels } = require("../redux/reducers/interactionsChannels");
 
 module.exports = (client) => {
     client.guilds.cache.map(async guild => {
@@ -19,13 +20,53 @@ module.exports = (client) => {
                         
                         await reactionsRef.onSnapshot(async snapshot => {
                             message.reactions.removeAll()
-                            let reactionText = ''
+                            snapshot.docChanges().forEach((change) => {
+                                if (change.type === "added") {
+                                    let emoji = change.doc.data().emoji.replace(/[^0-9]+/g,'') != '' ? doc.data().defaultEmoji || '🙂' : change.doc.data().emoji
+                                    client.store.dispatch(addInteractionsChannels({
+                                        guildId: guildCache.id,
+                                        channelId: doc.data().channelID,
+                                        stream: doc.data().stream || false,
+                                        interactionId: change.doc.id,
+                                        ...change.doc.data(),
+                                        defaultEmoji: change.doc.data().emoji.replace(/[^0-9]+/g,'') != '' ? doc.data().defaultEmoji || '🙂' : change.doc.data().emoji,
+                                        styleName: doc.data().styleName ? 
+                                        doc.data().styleName.replace('{interaction:emoji}', doc.data().defaultEmoji || '🙂').replace('{interaction:name}', change.doc.data().category)
+                                        : `${emoji} | ${change.doc.data().category}`,
+                                        viewRole: doc.data().viewRole || undefined
+                                    }))
+                                }
+
+                                if (change.type === "modified") {
+                                    client.store.dispatch(updateInteractionsChannels({
+                                        guildId: guildCache.id,
+                                        channelId: doc.data().channelID,
+                                        stream: doc.data().stream || false,
+                                        interactionId: change.doc.id,
+                                        ...change.doc.data(),
+                                        defaultEmoji: change.doc.data().emoji.replace(/[^0-9]+/g,'') != '' ? doc.data().defaultEmoji || '🙂' : change.doc.data().emoji,
+                                        styleName: doc.data().styleName ? 
+                                        doc.data().styleName.replace('{interaction:emoji}', doc.data().defaultEmoji || '🙂').replace('{interaction:name}', change.doc.data().category)
+                                        : `${emoji} | ${change.doc.data().category}`,
+                                        viewRole: doc.data().viewRole || undefined                                   
+                                    }))
+                                }
+
+                                if (change.type === "removed") { 
+                                    client.store.dispatch(removeInteractionsChannels({
+                                        interactionId: change.doc.id,
+                                        guildId: guildCache.id,
+                                        channelId: doc.data().channelID
+                                    }))
+                                }
+                            })
+                            // let reactionText = ''
                             let msgEmbed = new MessageEmbed();
                             msgEmbed.setTitle(doc.data().title)
                                 .setDescription(doc.data().description)
                                 .setThumbnail(message.guild.iconURL({ dynamic: true }))
                                 .setColor(doc.data().color);
-                            
+
                             let x = 0
                             let buttonsRows = [];
                             const colors = [
@@ -39,7 +80,7 @@ module.exports = (client) => {
                                 if(snapshot.docs[i] != undefined) {
                                     if(buttonsRows[x] === undefined)
                                         buttonsRows[x] = new MessageActionRow()
-
+                                    
                                     buttonsRows[x]
                                         .addComponents(
                                             new MessageButton()
@@ -51,18 +92,12 @@ module.exports = (client) => {
                                     if (buttonsRows[x].components.length > 4) x++
                                 }
                             }
-
-                                    // reaction.data().emoji
-                            snapshot.forEach(reaction => reactionText += `${reaction.data().emoji} **⇛** ${reaction.data().category}\n`)
-                            reactionText != '' ?
-                            msgEmbed.addField('Reacciona a:', `${reactionText}`)
-                            : 'No hay reacciones'
-                            msgEmbed.addField('Nota:', '😄 Recuerda que primero tienes que estar conectado al canal de voz.')
-
+                        
+                            msgEmbed.addField('Nota:','😄 \`Recuerda que primero tienes que estar conectado a un canal de voz.\`')
                             message.edit({
-                                embed: msgEmbed,
+                                embeds: [ msgEmbed ],
                                 components: buttonsRows
-                            })
+                            })                            
                         })
                     }).catch(err => {
                         reactionVoiceRef.doc(doc.id).delete().then(() => {
