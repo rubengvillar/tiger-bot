@@ -1,5 +1,6 @@
 
 const loaderInteractionChannels = require("../helpers/loaderInteractionChannels");
+const loaderTempChannels = require("../helpers/loaderTempChannels");
 const Event = require("../Structures/Event");
 
 module.exports = class extends (
@@ -45,5 +46,6 @@ module.exports = class extends (
         // // LoaderReactionVoices
         // await this.client.utils.createGuilds(this.client.guilds);
         loaderInteractionChannels(this.client)
+        loaderTempChannels(this.client)
     }
 };
