@@ -9,8 +9,7 @@ module.exports = class extends (
             aliases: ["pong"],
             category: "Información",
             usage: "[ping]",
-            description: "Muestra el ping del bot y la api de discord",
-            default_permission: true
+            description: "Muestra el ping del bot y la api de discord"
         });
     }
 
