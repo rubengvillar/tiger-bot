@@ -1,8 +1,8 @@
 {
   "name": "tigerbot",
-  "version": "1.0.0",
+  "version": "1.0.0Beta",
   "description": "Bot de gestion de comunidades",
-  "main": "indes.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
