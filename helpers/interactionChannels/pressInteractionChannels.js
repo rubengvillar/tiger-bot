@@ -1,10 +1,11 @@
-const { MessageEmbed, Permissions } = require('discord.js');
+const { MessageEmbed, Permissions, MessageActionRow, MessageButton, Emoji, MessageSelectMenu } = require('discord.js');
 
 const wait = require('util').promisify(setTimeout);
 const createChannel = require('../createChannel');
 
 module.exports = async (client, interaction) =>{
     if (!interaction.isButton()) return
+    let hilo
     const { store, database } = client
     const { user, customId, guildId, channelId, message } = interaction
     let guild, userInteraction, userChannelCurrent;
@@ -33,7 +34,15 @@ module.exports = async (client, interaction) =>{
         ]
     }
 
-    return interaction.deferReply({ ephemeral: false })
+    interactionFind = store.getState().interactionChannels
+                .filter(interactionStore => 
+                    interactionStore.guildId === guildId
+                    && interactionStore.channelId === channelId 
+                    && interactionStore.interactionId === customId)[0]
+    
+    if (!interactionFind) return
+    
+    return hilo = await interaction.deferReply({ ephemeral: false })
         .then(() => client.guilds.fetch(guildId))
         .then(guildFetch => {
             if (guildFetch === undefined) throw new Error('Servidor no encontrado...')
@@ -58,7 +67,7 @@ module.exports = async (client, interaction) =>{
             return guild.channels.cache.get(userInteraction.voice.channelId)
         })
         .then(userChannelCurrentFetch => {
-            if(userChannelCurrentFetch === undefined) throw new Error('Debes estar conectado a un canal de voz. Para poder crear una sala.')
+            if(userChannelCurrentFetch === undefined) throw { error: new Error('Debes estar conectado a un canal de voz. Para poder crear una sala.') }
             userChannelCurrent = userChannelCurrentFetch
             return;
         })
@@ -87,12 +96,12 @@ module.exports = async (client, interaction) =>{
                     && interactionStore.interactionId === customId)[0]
         })
         .then(() => {
-            if (!interactionFind) throw new Error('No se encontro la interaccion')
+            if (!interactionFind) return
         })
         .then(() => {
             name = interactionFind.emoji.replace(/[^0-9]+/g,'').trim() === '' 
-            ? `${interactionFind.emoji} ${interactionFind.category}` 
-            : `${interactionFind.defaultEmoji} ${interactionFind.category}`
+            ? `${interactionFind.emoji} | ${interactionFind.category}` 
+            : `${interactionFind.defaultEmoji} | ${interactionFind.category}`
         })
         .then(() => {
             return tempInteractionChannels = store.getState().tempInteractionChannels.filter(tempChannels => 
@@ -103,6 +112,7 @@ module.exports = async (client, interaction) =>{
         .then(() => {
             let guildInfo = store.getState().guilds.filter(guildQuery => guildQuery.id === guild.id)[0]
             guild.roles.fetch(guildInfo.roleMute).then(role => {
+                                    if (role.id === undefined) return
                                     permissions.textChannel.push({
                                         id: role.id,
                                         deny: ['VIEW_CHANNEL', 'SEND_MESSAGES'],
@@ -115,6 +125,8 @@ module.exports = async (client, interaction) =>{
                                 .catch(console.error);
         })
         .then(() => {
+            let denyPermissions = [Permissions.FLAGS.VIEW_CHANNEL]
+            if (!interactionFind.stream) denyPermissions.push(Permissions.FLAGS.STREAM)
             if(interactionFind.viewRole != undefined) {
                 permissions.voiceChannel.push({
                     id: interactionFind.viewRole,
@@ -122,19 +134,17 @@ module.exports = async (client, interaction) =>{
                 })
                 permissions.voiceChannel.push({
                     id: guildId,
-                    deny: [ Permissions.FLAGS.VIEW_CHANNEL ]
+                    deny: denyPermissions
                 })
             }
         })
         .then(() => {
-            console.log(tempInteractionChannels)
             if (!tempInteractionChannels.length) {
-                return createChannel(guild, name, {
+                return createChannel(guild, interactionFind.styleName, {
                     type: 'GUILD_CATEGORY',
                     position
                 })
                 .then(category => {
-                    // console.log(category)
                     return categoryInteraction = category.id || tempInteractionChannels[0].categoryInteraction
                 })
             } else {
@@ -150,7 +160,7 @@ module.exports = async (client, interaction) =>{
             }
         })
         .then(() => {
-            return createChannel(guild, `${name} ${size + 1}`, {
+            return createChannel(guild, `${interactionFind.styleName} ${size + 1}`, {
                 parent: categoryInteraction,
                 permissionOverwrites: permissions.textChannel,
             })
@@ -158,7 +168,7 @@ module.exports = async (client, interaction) =>{
         })
         .then(() => {
             // console.log(categoryInteraction)
-            return  createChannel(guild, `${name} ${size + 1}`, {
+            return  createChannel(guild, `${interactionFind.styleName} ${size + 1}`, {
                 parent: categoryInteraction,
                 type: 'GUILD_VOICE',
                 permissionOverwrites: permissions.voiceChannel,
@@ -176,17 +186,67 @@ module.exports = async (client, interaction) =>{
                     categoryInteraction: categoryInteraction || '',
                     textInteraction: textInteraction.id || '',
                     voiceInteraction: voiceInteraction.id || '',
+                    viewRole: interactionFind.viewRole === undefined ? interaction.guild.id : interactionFind.viewRole,
                     size: size+1
                 })
         })
         .then(() => {
             userInteraction.voice.setChannel(voiceInteraction)
         })
-        // .then(() => {
-        //     return createChannel(guild, name, {
-
-        //     })
-        // })
+        .then(() => {
+            const optionsUserLimit = interactionFind.userLimit
+                .map(limit => ({
+                    label: `${limit === '0' ? 'Sin limite de' : limit} usuarios.`,
+                    // description: '8 usuarios',
+                    value: limit,
+                }))
+            textInteraction.send({
+                tts: true,
+                content: `${user}. Este canal de texto permanece oculto para quienes no estan en el canal de voz.`,
+                embeds: [new MessageEmbed()
+                    .setTitle(`Sala Dinamica: ${name}`)
+                    .setDescription('Ahora cuento con multiples opciones.')
+                    .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
+                    .addField('Emoji', interactionFind.emoji, true)
+                    .addField('Nombre', interactionFind.category, true)
+                    .addField('Pueden', `<@&${interactionFind.viewRole === undefined ? interaction.guild.id : interactionFind.viewRole}>`, true)
+                    .addField('Stream o Camara: ', `${interactionFind.stream ? 'Si' : 'No'}`, true)
+                    .setColor('RANDOM')
+                ],
+                components: [
+                    new MessageActionRow()
+                        .addComponents([
+                            new MessageButton()
+                                .setCustomId('lock')
+                                .setEmoji('🔐')
+                                .setLabel('Cerrar')
+                                .setStyle('DANGER'),
+                            new MessageButton()
+                                .setCustomId('claim')
+                                .setEmoji('585789630800986114')
+                                .setLabel('Reclamar')
+                                .setStyle('SECONDARY'),
+                            new MessageButton()
+                                .setCustomId('block')
+                                .setEmoji('464520569560498197')
+                                .setLabel('Bloquear')
+                                .setStyle('SECONDARY'),
+                            new MessageButton()
+                                .setCustomId('unblock')
+                                .setEmoji('658538493470965787')
+                                .setLabel('Desbloquar')
+                                .setStyle('SECONDARY'),
+                        ]),
+                        new MessageActionRow()
+                            .addComponents([
+                                new MessageSelectMenu()
+                                    .setCustomId('select')
+                                    .setPlaceholder('Cambia la cantidad de usuarios que pueden entrar.')
+                                    .addOptions(optionsUserLimit),
+                            ])
+                ]
+            })
+        })
         .then(async () => {
             await wait(4000)
             return interaction.deleteReply()

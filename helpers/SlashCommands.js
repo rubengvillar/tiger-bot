@@ -18,14 +18,14 @@ module.exports.slashCommands = async (client, interaction) => {
     }
 
     interaction.member = await interaction.guild.members.cache.get(interaction.user.id);
-    interaction.channel = await interaction.guild.channels.cache.get(interaction.channelId);
+    interaction.channel = await interaction.guild.channels.cache.get(interaction.channelId);    
     
     try {
         interaction.channel.guild.members.fetch(client.user.id)
             .then(bot => {
                 if (!bot.permissions.has(cmd.permBot))
                     return (bot.hasPermission('SEND_MESSAGES')) ? interaction.editReply(`Necesito los siguiente permisos \`${cmd.permBot.join(", ")}\``) : true;
-                if (!interaction.member.permissions.has(cmd.permUser)) return interaction.editReply(`"❌ Permisos insuficientes... ${cmd.permUser}"`);
+                if (!interaction.member.permissions.has(cmd.permUser)) return interaction.editReply(`"❌ Permisos insuficientes... ${cmd.permUser.join(", ")}"`);
                 cmd.execute(interaction, args);
             })
             .catch(console.error)

@@ -25,8 +25,7 @@ module.exports = (client, oldState, newState) => {
                             setTimeout(async ()=>{
                                 let channels = client.store.getState().tempInteractionChannels
                                     .filter(tempChannelQuery => {
-                                        console.log('TempChannels: ',tempChannelQuery.interactionId, tempChannel.interactionId)
-                                        return tempChannelQuery.interactionId === tempChannel.interactionId
+                                        return tempChannelQuery.interactionId === tempChannel.interactionId && tempChannelQuery.guildId === tempChannel.guildId
                                     })
                                 if (channels.length <= 0) {
                                     return categoryChannelQuery.delete()
@@ -40,18 +39,8 @@ module.exports = (client, oldState, newState) => {
                         .then(textInteraction=>{
                             textInteraction.permissionOverwrites.delete(id, 'Left interaction channel')
                         })
-                    
                 }
             })
             .catch(console.error)
-        // setTimeout(async ()=>{
-        //     const sizeChannels = await oldState.guild.channels.cache.filter(categoryCurrent => categoryCurrent.parentID === channel.data().parent).size
-        //     if (sizeChannels <= 0) {
-        //         await categoryChannel.delete()
-        //             .catch(error => console.error(error))
-        //         client.db.collection('guilds').doc(oldState.guild.id).collection('categoryChannels').doc(channel.data().parent).delete()
-        //             .catch(error => console.error(error));
-        //     }
-        // }, 5000)
     }
 }

@@ -12,8 +12,14 @@ const interactionsChannels = createSlice({
         return state.filter(interactionChannel => interactionChannel.interactionId !== action.payload.interactionId && interactionChannel.guildId !== action.payload.guildId && interactionChannel.channelId !== action.payload.channelId)
     },
     updateInteractionsChannels: (state, action) => {
-        return state.map(interactionChannel => (interactionChannel.id === action.payload.id  && interactionChannel.guild === action.payload.guild) ? { ...action.payload } : interactionChannel)
+        return state.map(interactionChannel => {
+            return (interactionChannel.channelId === action.payload.channelId  && interactionChannel.guildId === action.payload.guildId && interactionChannel.interactionId === action.payload.interactionId) ? { ...action.payload } : interactionChannel
+        })
+    },
+    removeAllInteractionsChannels: (state, action) => {
+        return state.filter(interactionChannel => (interactionChannel.channelId === action.payload.channelId && interactionChannel.guildId === action.payload.guildId))
     }
+
   }
 })
 
