@@ -24,6 +24,7 @@ module.exports = class extends (
         let activities = [
             () => `${this.client.guilds.cache.size} servidores!`,
             () => `${this.client.channels.cache.size} canales!`,
+            () => `${this.client.store.getState().tempInteractionChannels.length} Salas Dinamicas`,
             () => `${this.client.guilds.cache.reduce(
                 (a, b) => a + b.memberCount,
                 0
