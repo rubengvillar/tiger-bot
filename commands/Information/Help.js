@@ -63,6 +63,7 @@ module.exports = class extends (
             embed.setDescription(
                 `Estos son los comandos disponibles para ${interaction.guild.name}`
             );
+            embed.addField('SlashCommands', 'Ahora todos mis comandos son con \`/\`')
             let categories = this.client.utils.removeDuplicates(
                 this.client.globalCommands
                     .filter((cmd) => interaction.member.permissions.has(cmd.permUser))
@@ -85,7 +86,7 @@ module.exports = class extends (
                     `**${this.client.utils.capitalise(category)}**`,
                     this.client.globalCommands
                         .filter((cmd) => cmd.category === category && interaction.member.permissions.has(cmd.permUser))
-                        .map((cmd) => `\`${cmd.name}\``)
+                        .map((cmd) => `\`/${cmd.name}\``)
                         .join(" ")
                     + "\u200b"
                 );
