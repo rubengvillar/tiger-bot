@@ -70,6 +70,8 @@ module.exports = (client) => {
                                 .setColor(queryChange.doc.data().color)
                                 .setImage(guild.bannerURL())
                                 .setFooter(`Salas dinamicas para: ${guild}`)
+                                .addField(`Pueden entrar:`, `<@&${queryChange.doc.data().viewRole || guild.id}>`, true)
+                                .addField('Stream o Camara:', queryChange.doc.data().stream ? 'Si' : 'No', true)
                                 .setTimestamp()
 
                             let x = 0
@@ -98,7 +100,7 @@ module.exports = (client) => {
                                 }
                             }
                         
-                            msgEmbed.addField('Nota:','😄 \`Recuerda que primero tienes que estar conectado a un canal de voz.\`')
+                            msgEmbed.addField('Nota:', `😄 \`Recuerda que primero tienes que estar conectado a la sala de espera.\``)
                             message.edit({
                                 embeds: [ msgEmbed ],
                                 components: buttonsRows

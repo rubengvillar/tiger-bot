@@ -209,41 +209,41 @@ module.exports = async (client, interaction) =>{
                     .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
                     .addField('Emoji', interactionFind.emoji, true)
                     .addField('Nombre', interactionFind.category, true)
-                    .addField('Pueden', `<@&${interactionFind.viewRole === undefined ? interaction.guild.id : interactionFind.viewRole}>`, true)
+                    .addField('Pueden entrar', `<@&${interactionFind.viewRole === undefined ? interaction.guild.id : interactionFind.viewRole}>`, true)
                     .addField('Stream o Camara: ', `${interactionFind.stream ? 'Si' : 'No'}`, true)
                     .setColor('RANDOM')
                 ],
                 components: [
+                    // new MessageActionRow()
+                    //     .addComponents([
+                    //         new MessageButton()
+                    //             .setCustomId('lock')
+                    //             .setEmoji('🔐')
+                    //             .setLabel('Cerrar')
+                    //             .setStyle('DANGER'),
+                    //         new MessageButton()
+                    //             .setCustomId('claim')
+                    //             .setEmoji('585789630800986114')
+                    //             .setLabel('Reclamar')
+                    //             .setStyle('SECONDARY'),
+                    //         new MessageButton()
+                    //             .setCustomId('block')
+                    //             .setEmoji('464520569560498197')
+                    //             .setLabel('Bloquear')
+                    //             .setStyle('SECONDARY'),
+                    //         new MessageButton()
+                    //             .setCustomId('unblock')
+                    //             .setEmoji('658538493470965787')
+                    //             .setLabel('Desbloquar')
+                    //             .setStyle('SECONDARY'),
+                    //     ]),
                     new MessageActionRow()
                         .addComponents([
-                            new MessageButton()
-                                .setCustomId('lock')
-                                .setEmoji('🔐')
-                                .setLabel('Cerrar')
-                                .setStyle('DANGER'),
-                            new MessageButton()
-                                .setCustomId('claim')
-                                .setEmoji('585789630800986114')
-                                .setLabel('Reclamar')
-                                .setStyle('SECONDARY'),
-                            new MessageButton()
-                                .setCustomId('block')
-                                .setEmoji('464520569560498197')
-                                .setLabel('Bloquear')
-                                .setStyle('SECONDARY'),
-                            new MessageButton()
-                                .setCustomId('unblock')
-                                .setEmoji('658538493470965787')
-                                .setLabel('Desbloquar')
-                                .setStyle('SECONDARY'),
-                        ]),
-                        new MessageActionRow()
-                            .addComponents([
-                                new MessageSelectMenu()
-                                    .setCustomId('select')
-                                    .setPlaceholder('Cambia la cantidad de usuarios que pueden entrar.')
-                                    .addOptions(optionsUserLimit),
-                            ])
+                            new MessageSelectMenu()
+                                .setCustomId(`maxusers_${voiceInteraction.id}`)
+                                .setPlaceholder('Cambia la cantidad de usuarios que pueden entrar.')
+                                .addOptions(optionsUserLimit),
+                        ])
                 ]
             })
         })
