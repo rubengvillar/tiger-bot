@@ -46,7 +46,7 @@ const createReactions = async (interaction) =>{
             if (msg.content.toLowerCase() === 'si' && reactions.length <= 25)
                 return createReactions(interaction);
             
-            return reactionVoices
+            return reactions
         })
 }
 
