@@ -14,7 +14,7 @@ module.exports = (client) => {
 
                     const channelFind = await guildCache.channels.cache.find(channel => channel.id === queryChange.doc.data().channelID)
 
-                    const message = await channelFind.messages.fetch(queryChange.doc.id).then(async message => {
+                    await channelFind?.messages.fetch(queryChange.doc.id).then(async message => {
 
                         if(queryChange.type === 'added') {
                         message.reactions.removeAll()
