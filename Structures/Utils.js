@@ -58,29 +58,29 @@ module.exports = class Util {
                         })
         
                         this.client.on("ready", ()=>{
-                            // this.client.guilds.cache.map(async guild => {
-                            //     // let commandsTemp = commandsList
-                            //     // commandsTemp.map(command => {
-                            //     //     console.log(guild.name ,command.name, 'addOwner')
-                            //     //     command.permissions.permissions.push({
-                            //     //         id: guild.ownerId,
-                            //     //         type: 'USER',
-                            //     //         permission: true
-                            //     //     })
-                            //     //     return command
-                            //     // })
+                            this.client.guilds.cache.map(async guild => {
+                                // let commandsTemp = commandsList
+                                // commandsTemp.map(command => {
+                                //     console.log(guild.name ,command.name, 'addOwner')
+                                //     command.permissions.permissions.push({
+                                //         id: guild.ownerId,
+                                //         type: 'USER',
+                                //         permission: true
+                                //     })
+                                //     return command
+                                // })
 
-                            //     await guild.commands.set(commandsList)
-                            //         // .then(() => guild.commands.permissions.fetch())
-                            //         // .then(permissions => console.log(guild.name, permissions))
-                            //         .catch(console.error)
+                                await guild.commands.set(commandsList)
+                                    // .then(() => guild.commands.permissions.fetch())
+                                    // .then(permissions => console.log(guild.name, permissions))
+                                    .catch(console.error)
                                 
-                            //     // await this.client.application.commands.set(commandsList, guild.id)
-                            //     //     .catch(console.error)
-                            // });
+                                // await this.client.application.commands.set(commandsList, guild.id)
+                                //     .catch(console.error)
+                            });
 
                             // Register for all the guilds the bot is in
-                            this.client.application.commands.set(commandsList);
+                            // this.client.application.commands.set(arrayOfSlashCommands);
                         })
                     }
                 );
