@@ -13,7 +13,8 @@ module.exports = class extends (
                 {
                     name: "stream",
                     description: "Pueden o no prender camara en una sala.",
-                    type: "BOOLEAN"
+                    type: "BOOLEAN",
+                    required: true
                 }
             ],
             permUser: [
