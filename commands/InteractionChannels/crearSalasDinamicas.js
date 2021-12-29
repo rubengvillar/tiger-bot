@@ -321,7 +321,7 @@ module.exports = class extends (
                                 color: selectColor,
                                 title: title,
                                 roleGestion: roleGestion || null,
-                                description: 'descripcion del canal',
+                                description: description,
                                 awaiting: resultados.awaiting.id,
                                 panel: resultados.panel.id,
                                 category: resultados.category.id,
