@@ -73,7 +73,10 @@ module.exports = async (client, interaction) =>{
         })
         .then(() => {
             if (!userChannelCurrent.permissionsFor(client.user).has('MOVE_MEMBERS')){
-                throw new Error(`No tengo permisos para moverte desde: <#${userInteraction.voice.channelId}>`)
+                throw {
+                    type: 'validate',
+                    message: `No tengo permisos para moverte desde: <#${userInteraction.voice.channelId}>`
+                }
             }
             return
         })
@@ -167,7 +170,6 @@ module.exports = async (client, interaction) =>{
             .then(channel => textInteraction = channel)
         })
         .then(() => {
-            // console.log(categoryInteraction)
             return  createChannel(guild, `${interactionFind.styleName} ${size + 1}`, {
                 parent: categoryInteraction,
                 type: 'GUILD_VOICE',
@@ -191,7 +193,7 @@ module.exports = async (client, interaction) =>{
                 })
         })
         .then(() => {
-            userInteraction.voice.setChannel(voiceInteraction)
+            return userInteraction.voice.setChannel(voiceInteraction)
         })
         .then(() => {
             const optionsUserLimit = interactionFind.userLimit
@@ -252,18 +254,21 @@ module.exports = async (client, interaction) =>{
             return interaction.deleteReply()
         })
         .catch(async err => {
-            console.log(err)
-            await interaction.editReply({ 
-            content: `${user}`,
-            embeds: [
-                new MessageEmbed()
-                    .setTitle('Error')
-                    .setDescription(`${err}`)
-                    .setThumbnail(guild.iconURL({ dynamic: true }))
-                    .setColor('YELLOW')
-                ]
-            })
-            await wait(4000)
-            return interaction.deleteReply()
+            switch (err.type) {
+                case 'validate':
+                    interaction.editReply({
+                        content: `${user}`,
+                        embeds: [new MessageEmbed()
+                            .setTitle('Error')
+                            .setThumbnail(guild.iconURL({ dynamic: true }))
+                            .setColor('YELLOW')
+                            .setDescription(`${err.message}`)
+                        ]})
+                    await wait(4000)
+                    interaction.deleteReply()
+                    break
+                default:
+                    console.error(`Guild: ${interaction.guild}, ${err}`)
+            }
         })
 }
