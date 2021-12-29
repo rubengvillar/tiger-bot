@@ -67,7 +67,10 @@ module.exports = async (client, interaction) =>{
             return guild.channels.cache.get(userInteraction.voice.channelId)
         })
         .then(userChannelCurrentFetch => {
-            if(userChannelCurrentFetch === undefined) throw { error: new Error('Debes estar conectado a un canal de voz. Para poder crear una sala.') }
+            if(userChannelCurrentFetch === undefined) throw { 
+                type: 'validate',
+                message: 'Debes estar conectado a un canal de voz. Para poder crear una sala.'
+            }
             userChannelCurrent = userChannelCurrentFetch
             return;
         })
@@ -254,21 +257,19 @@ module.exports = async (client, interaction) =>{
             return interaction.deleteReply()
         })
         .catch(async err => {
-            switch (err.type) {
-                case 'validate':
-                    interaction.editReply({
-                        content: `${user}`,
-                        embeds: [new MessageEmbed()
-                            .setTitle('Error')
-                            .setThumbnail(guild.iconURL({ dynamic: true }))
-                            .setColor('YELLOW')
-                            .setDescription(`${err.message}`)
-                        ]})
-                    await wait(4000)
-                    interaction.deleteReply()
-                    break
-                default:
-                    console.error(`Guild: ${interaction.guild}, ${err}`)
+            if (err.type === 'validate') {
+                await interaction.editReply({
+                    content: `${user}`,
+                    embeds: [new MessageEmbed()
+                        .setTitle('Advertencia.')
+                        .setThumbnail(guild.iconURL({ dynamic: true }))
+                        .setColor('YELLOW')
+                        .setDescription(`${err.message}`)
+                    ]})
+                await wait(4000)
+                return await interaction.deleteReply()
             }
+
+            console.error(`Guild: ${interaction.guild}, ${err}`)
         })
 }
