@@ -73,7 +73,7 @@ module.exports = class Util {
                                 // })
                                 if (!guild.members.cache.get(this.client.user.id).permissions.has(Permissions.FLAGS.USE_APPLICATION_COMMANDS)) return console.log(`Sin permisos`)
                                 await this.client.application.commands.set(commandsList, guild.id)
-                                    .then(console.log)
+                                    // .then(console.log)
                                     .catch(console.error);
                                 // await guild.commands.set(commandsList)
                                 //     // .then(() => guild.commands.permissions.fetch())

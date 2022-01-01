@@ -6,14 +6,15 @@ module.exports = class extends (
 ) {
     constructor(...args) {
         super(...args, {
-            description: "Permitir que puedan prender camara a partir en todas las salas dinamicas seleccionadas.",
+            description: "Personaliza como creare las salas variables existentes {interaction:emoji} y {interaction:name}",
             category: "Salas dinamicas",
-            usage: "[streamSalaDinamica]",
+            usage: "[estiloSalaDinamica]",
+            example: '〔{interaction:emoji}〕{interaction:name}',
             options: [
                 {
-                    name: "stream",
-                    description: "Pueden o no prender camara en una sala.",
-                    type: "BOOLEAN",
+                    name: "style",
+                    description: "variables disponibles: {interaction:name} o {interaction:emoji}",
+                    type: "STRING",
                     required: true
                 }
             ],
@@ -24,7 +25,7 @@ module.exports = class extends (
         });
     }
 
-    async execute(interaction, [stream]) {
+    async execute(interaction, [ styleName ]) {
         let filter = (menu) => {return menu.user.id === interaction.user.id}
         return this.client.database
                 .collection('guilds')
@@ -43,7 +44,7 @@ module.exports = class extends (
                             }
                     })
                     return interaction.editReply({
-                        content: `Donde ${stream ? 'podran': 'no podran'} prender camara o compartir pantalla?`,
+                        content: `A que salas le queres cambiar el estilo?`,
                         components: [
                             new MessageActionRow()
                             .addComponents([
@@ -66,10 +67,10 @@ module.exports = class extends (
                             .collection('reactionVoices')
                             .doc(resp.values[0])
                             .set({
-                                stream
+                                styleName
                             }, { merge: true })
                     })
-                    .then(() => interaction.editReply({content: 'Ahora los usuarios podran prender camara o compartir.', components: []}))
+                    .then(() => interaction.editReply({content: 'Ahora las salas dinamicas se veran con el estilo de tu server.', components: []}))
                 })
                 .catch(console.error)
     }
