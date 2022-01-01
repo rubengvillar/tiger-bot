@@ -5,6 +5,7 @@ const Event = require("./Event.js");
 const Command = require("./Command.js");
 const getCommands = require("../helpers/getCommands.js");
 const { addGuild, updateGuild, removeGuild } = require("../redux/reducers/guilds.js");
+const { Permissions } = require("discord.js");
 
 module.exports = class Util {
     constructor(client) {
@@ -69,7 +70,8 @@ module.exports = class Util {
                                 //     })
                                 //     return command
                                 // })
-
+                                if (!guild.members.cache.get(this.client.user.id).permissions.has(Permissions.FLAGS.USE_APPLICATION_COMMANDS)) return console.log(`Sin permisos`)
+                                
                                 await guild.commands.set(commandsList)
                                     // .then(() => guild.commands.permissions.fetch())
                                     // .then(permissions => console.log(guild.name, permissions))
