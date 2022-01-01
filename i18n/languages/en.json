@@ -1,0 +1,8 @@
+{
+    "translation": {
+      "hello": "hello",
+      "help.title": "Help menu",
+      "help.description": "These are the commands available to {{ guild }}",
+      "help.slashcommands": "Now all my commands are with: "
+    }
+}

@@ -2,6 +2,7 @@ const { Client, Collection, Intents } = require("discord.js");
 const Utils = require("./Utils");
 const store = require("../redux/store");
 const firebase = require("../data/firebase");
+const i18n = require("../i18n");
 module.exports.Bot = class Bot extends (
     Client
 ) {
@@ -20,6 +21,7 @@ module.exports.Bot = class Bot extends (
         this.utils.loadCommands()
         this.store = store
         this.database = firebase
+        this.language = i18n
     }
 
     validate(token) {

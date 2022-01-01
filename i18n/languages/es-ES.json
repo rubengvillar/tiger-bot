@@ -1,0 +1,13 @@
+{
+    "translation": {
+      "hello": "Hola",
+      "help.title": "Menu de ayuda",
+      "help.description": "Estos son los comandos disponibles para {{ guild }}",
+      "help.slashcommands": "Ahora todos mis comandos son con: ",
+      "help.command.title": "Ayuda del comando: {{ command }}",
+      "help.command.description": "**❯ Descripción:** {{ description }} \n **❯ Ejemplo:** {{ example }} \n **❯ Categoria:** {{ category }} \n **❯ Uso:** {{ usage }}",
+      "help.command.existed": "Nombre del comando `{{ command }}` no existe.",
+
+      "music.bots.title": "Estado actual de los bots de música 🎶"
+    }
+}

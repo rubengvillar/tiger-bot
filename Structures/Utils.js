@@ -152,13 +152,15 @@ module.exports = class Util {
                     if (change.type === "added") {
                         this.client.store.dispatch(addGuild({
                             id: change.doc.id,
-                            ...change.doc.data()
+                            ...change.doc.data(),
+                            guildLocale: change.doc.data().preferredLocale || guild.preferredLocale
                         }))
                     }
                     if (change.type === "modified") {
                         this.client.store.dispatch(updateGuild({
                             id: change.doc.id,
-                            ...change.doc.data()
+                            ...change.doc.data(),
+                            guildLocale: change.doc.data().preferredLocale || guild.preferredLocale
                         }))
                     }
                     if (change.type === "removed") {

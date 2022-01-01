@@ -15,7 +15,8 @@ module.exports = class extends (
             guildOwnerID: gData.ownerId,
             guildMemberCount: gData.memberCount,
             prefix: "#",
-        })
+            preferredLocale: gData.preferredLocale
+        }, { merge: true })
         .then(()=>{
             const commandsList = this.client.globalCommands
             return gData.commands.set(commandsList)
