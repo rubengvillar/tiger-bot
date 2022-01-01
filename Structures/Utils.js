@@ -58,28 +58,32 @@ module.exports = class Util {
                             }
                         })
         
-                        this.client.on("ready", ()=>{
-                            this.client.guilds.cache.map(async guild => {
-                                // let commandsTemp = commandsList
-                                // commandsTemp.map(command => {
-                                //     console.log(guild.name ,command.name, 'addOwner')
-                                //     command.permissions.permissions.push({
-                                //         id: guild.ownerId,
-                                //         type: 'USER',
-                                //         permission: true
-                                //     })
-                                //     return command
-                                // })
-                                if (!guild.members.cache.get(this.client.user.id).permissions.has(Permissions.FLAGS.USE_APPLICATION_COMMANDS)) return console.log(`Sin permisos`)
+                        this.client.on("ready", async ()=>{
+                            await this.client.application.commands.set(commandsList)
+                                    .then(console.log)
+                                    .catch(console.error);
+                            // this.client.guilds.cache.map(async guild => {
+                            //     // let commandsTemp = commandsList
+                            //     // commandsTemp.map(command => {
+                            //     //     console.log(guild.name ,command.name, 'addOwner')
+                            //     //     command.permissions.permissions.push({
+                            //     //         id: guild.ownerId,
+                            //     //         type: 'USER',
+                            //     //         permission: true
+                            //     //     })
+                            //     //     return command
+                            //     // })
+                            //     if (!guild.members.cache.get(this.client.user.id).permissions.has(Permissions.FLAGS.USE_APPLICATION_COMMANDS)) return console.log(`Sin permisos`)
+
+                            //     // await guild.commands.set(commandsList)
+                            //     //     // .then(() => guild.commands.permissions.fetch())
+                            //     //     // .then(permissions => console.log(guild.name, permissions))
+                            //     //     .catch(console.error)
                                 
-                                await guild.commands.set(commandsList)
-                                    // .then(() => guild.commands.permissions.fetch())
-                                    // .then(permissions => console.log(guild.name, permissions))
-                                    .catch(console.error)
+                            //     // await this.client.application.commands.set(commandsList, guild.id)
+                            //     //     .catch(console.error)
                                 
-                                // await this.client.application.commands.set(commandsList, guild.id)
-                                //     .catch(console.error)
-                            });
+                            // });
 
                             // Register for all the guilds the bot is in
                             // this.client.application.commands.set(arrayOfSlashCommands);
