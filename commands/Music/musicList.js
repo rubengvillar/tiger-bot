@@ -30,7 +30,10 @@ module.exports = class extends (
         .then(async queryBots => {
             if (queryBots.empty) {
                 messageEmbed.setDescription('No tenemos registrados bots actualmente.')
-                return interaction.editReply(messageEmbed);
+                return interaction.editReply({
+                    content: `${interaction.user}`,
+                    embeds: [messageEmbed]
+                });
             }
             await queryBots.forEach(async doc => {
                 const botEncontrado = await interaction.guild.members.cache.get(doc.id)
