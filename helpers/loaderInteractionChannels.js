@@ -121,7 +121,7 @@ module.exports = (client) => {
                             data.forEach(interaction => {
                                 client.store.dispatch(updateInteractionsChannels({
                                     ...interaction,
-                                    viewRole: queryChange.doc.data().viewRole || '',
+                                    viewRole: queryChange.doc.data().viewRole || null,
                                     styleName: queryChange.doc.data().styleName ? 
                                         queryChange.doc.data().styleName.replace('{interaction:emoji}', interaction.defaultEmoji || queryChange.doc.data().defaultEmoji || '🙂').replace('{interaction:name}', interaction.category)
                                         : `${interaction.emoji} | ${interaction.category}`,                            

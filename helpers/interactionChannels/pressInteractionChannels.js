@@ -214,7 +214,7 @@ module.exports = async (client, interaction) =>{
                     .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
                     .addField('Emoji', interactionFind.emoji, true)
                     .addField('Nombre', interactionFind.category, true)
-                    .addField('Pueden entrar', `<@&${interactionFind.viewRole === undefined ? interaction.guild.id : interactionFind.viewRole}>`, true)
+                    .addField('Pueden entrar', `<@&${!interactionFind.viewRole ? interaction.guild.id : interactionFind.viewRole}>`, true)
                     .addField('Stream o Camara: ', `${interactionFind.stream ? 'Si' : 'No'}`, true)
                     .setColor('RANDOM')
                 ],
