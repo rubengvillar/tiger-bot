@@ -59,7 +59,6 @@ module.exports = class Util {
                         })
         
                         this.client.on("ready", ()=>{
-                            
                             this.client.guilds.cache.map(async guild => {
                                 // let commandsTemp = commandsList
                                 // commandsTemp.map(command => {

@@ -25,7 +25,7 @@ module.exports = class extends (
         });
     }
 
-    async execute(interaction, [ styleName ]) {
+    async execute( interaction, {style} ) {
         let filter = (menu) => {return menu.user.id === interaction.user.id}
         return this.client.database
                 .collection('guilds')
@@ -67,7 +67,7 @@ module.exports = class extends (
                             .collection('reactionVoices')
                             .doc(resp.values[0])
                             .set({
-                                styleName
+                                styleName: style
                             }, { merge: true })
                     })
                     .then(() => interaction.editReply({content: 'Ahora las salas dinamicas se veran con el estilo de tu server.', components: []}))

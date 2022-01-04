@@ -13,7 +13,7 @@ module.exports = class extends (
             usage: "[channelsInteractions]",
             options: [
                 {
-                    name: "categoria",
+                    name: "category",
                     description: "Nombre de la categoria.",
                     type: "STRING",
                     required: true,
@@ -139,7 +139,7 @@ module.exports = class extends (
         });
     }
 
-    async execute(interaction, [title, roleGestion ,emoji, description,  viewRole, color,]) {
+    async execute(interaction, { category, gestion, emoji, description,  viewRole, color }) {
         const guildStore = this.client.store.getState().guilds.filter(guild => guild.id === interaction.guild.id)[0]
         const errorEmbed = new MessageEmbed()
             .setTitle('Opción no valida')
@@ -147,13 +147,6 @@ module.exports = class extends (
         let resultados = {}
         let Reactions = []
         let configInteractionChannel = {
-            channelID: '',
-            panelID: '',
-            emoji: '',
-            color: '',
-            viewRole: '',
-            title: '',
-            description: '',
             permissions: {
                 textChannel: [
                     {
@@ -182,7 +175,7 @@ module.exports = class extends (
                         ]
                     },
                     {
-                        id: roleGestion,
+                        id: gestion,
                         allow: [
                             Permissions.FLAGS.VIEW_CHANNEL
                         ]
@@ -214,7 +207,7 @@ module.exports = class extends (
                 })
                 .then(reactions => Reactions = reactions)
                 .then(() => {
-                    return createChannel(interaction.guild, `${emoji} | ${title}`, {
+                    return createChannel(interaction.guild, `${emoji} | ${category}`, {
                         type: 'GUILD_CATEGORY',
                         permissionOverwrites: [
                             {
@@ -260,7 +253,7 @@ module.exports = class extends (
                                 ]
                             },
                             {
-                                id: roleGestion,
+                                id: gestion,
                                 allow: [
                                     Permissions.FLAGS.VIEW_CHANNEL,
                                     Permissions.FLAGS.SEND_MESSAGES,
@@ -290,7 +283,7 @@ module.exports = class extends (
                     return result.interactor.send({
                         embeds: [
                             new MessageEmbed()
-                                .setTitle(`Selecciona una sala de: ${title}`)
+                                .setTitle(`Selecciona una sala de: ${category}`)
                                 .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
                                 .setImage(interaction.guild.bannerURL())
                                 .setDescription(`${description}`)
@@ -302,7 +295,7 @@ module.exports = class extends (
                         return result.panel.send({
                             embeds: [
                                 new MessageEmbed()
-                                    .setTitle(`Panel de control de: ${title}`)
+                                    .setTitle(`Panel de control de: ${category}`)
                                     .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
                                     .setDescription(`Estas opciones estan en desarrollo pronto estaran listas.`)
                                     .setColor(selectColor)
@@ -319,8 +312,8 @@ module.exports = class extends (
                             .set({
                                 channelID: resultados.interactor.id,
                                 color: selectColor,
-                                title: title,
-                                roleGestion: roleGestion || null,
+                                title: category,
+                                roleGestion: gestion || null,
                                 description: description,
                                 awaiting: resultados.awaiting.id,
                                 panel: resultados.panel.id,

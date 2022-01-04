@@ -11,7 +11,7 @@ module.exports = class extends (
             usage: "[addbotmusica]",
             description: "Quitar un bot de musica de la lista.",
             options: [{
-                name: "bot",
+                name: "botid",
                 description: "Seleccione un bot",
                 type: "USER",
                 required: true
@@ -22,15 +22,16 @@ module.exports = class extends (
         });
     }
 
-    async execute(interaction, [ botId ]) {
-        const bot = await interaction.guild.members.cache.get(botId)
+    async execute(interaction, { botid }) {
+        const bot = await interaction.guild.members.cache.get(botid)
 
         if (!bot.user.bot) return interaction.editReply('🎶 Deberias mensionar un bot de musica.');
 
         return this.client.database.collection('guilds').doc(interaction.guild.id)
-            .collection('musicBots').doc(botId).delete()
+            .collection('musicBots').doc(botid).delete()
                 .then(()=> {
-                    return interaction.editReply(`El bot fue removido con exito: <@${botId}>`)
-                });
+                    return interaction.editReply(`El bot fue removido con exito: <@${botid}>`)
+                })
+                .catch(err => interaction.editReply(`${err}`));
     }
 };

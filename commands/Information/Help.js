@@ -19,7 +19,7 @@ module.exports = class extends (
         });
     }
 
-    async execute(interaction, [command]) {
+    async execute(interaction, { command }) {
         const translate = getLocale(interaction, this.client)
 
         const embed = new MessageEmbed()

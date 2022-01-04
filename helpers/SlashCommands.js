@@ -6,15 +6,14 @@ module.exports.slashCommands = async (client, interaction) => {
     if (!cmd)
         return interaction.editReply({ content: "An error has occured ", ephemeral: true }).catch(() => {});
     
-    const args = [];
-
+    const args = {};
     for (let option of interaction.options.data) {
-        if (option.type === "SUB_COMMAND") {
+        if (option.type === "SUB_COMMAND") {            
             if (option.name) args.push(option.name);
             option.options?.forEach((x) => {
                 if (x.value) args.push(x.value);
             });
-        } else if (option.value) args.push(option.value);
+        } else args[option.name] = option.value;
     }
 
     interaction.member = await interaction.guild.members.cache.get(interaction.user.id);
@@ -26,7 +25,7 @@ module.exports.slashCommands = async (client, interaction) => {
                 if (!bot.permissions.has(cmd.permBot))
                     return (bot.hasPermission('SEND_MESSAGES')) ? interaction.editReply(`Necesito los siguiente permisos \`${cmd.permBot.join(", ")}\``) : true;
                 if (!interaction.member.permissions.has(cmd.permUser)) return interaction.editReply(`"❌ Permisos insuficientes... ${cmd.permUser.join(", ")}"`);
-                cmd.execute(interaction, args);
+                return cmd.execute(interaction, args);
             })
             .catch(console.error)
         

@@ -21,7 +21,7 @@ module.exports = class extends (
         });
     }
 
-    async execute(interaction, [role]) {
+    async execute(interaction, {role} ) {
         return interaction.guild.roles.fetch(role)
         .then(async roleGuild => {
             if (roleGuild === undefined) { throw new Error('El rol no fue encontrado') }

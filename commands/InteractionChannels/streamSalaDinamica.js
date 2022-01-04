@@ -24,8 +24,9 @@ module.exports = class extends (
         });
     }
 
-    async execute(interaction, [stream]) {
+    async execute(interaction, {stream}) {
         let filter = (menu) => {return menu.user.id === interaction.user.id}
+        console.log(stream)
         return this.client.database
                 .collection('guilds')
                 .doc(interaction.guild.id)

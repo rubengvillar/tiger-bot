@@ -24,7 +24,6 @@ module.exports = class extends (
 
     async execute(interaction, [ botId ]) {
         const bot = await interaction.guild.members.cache.get(botId)
-        console.log(bot)
         if (!bot.user.bot)
             return interaction.editReply('🎶 Deberias mensionar un bot de musica.');
 

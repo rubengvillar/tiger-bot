@@ -24,7 +24,7 @@ module.exports = class extends (
         });
     }
 
-    async execute(interaction, [role]) {
+    async execute(interaction, {rol}) {
         let filter = (menu) => {return menu.user.id === interaction.user.id}
         return this.client.database
                 .collection('guilds')
@@ -43,7 +43,7 @@ module.exports = class extends (
                             }
                     })
                     return interaction.editReply({
-                        content: `Rol a agregar: ${role}, Donde deseas agregarlo?`,
+                        content: `Rol a agregar: ${rol}, Donde deseas agregarlo?`,
                         components: [
                             new MessageActionRow()
                             .addComponents([
@@ -66,7 +66,7 @@ module.exports = class extends (
                             .collection('reactionVoices')
                             .doc(resp.values[0])
                             .set({
-                                viewRole: role
+                                viewRole: rol
                             }, { merge: true })
                     })
                     .then(() => interaction.editReply({content: 'El rol fue añadido con exito.', components: []}))

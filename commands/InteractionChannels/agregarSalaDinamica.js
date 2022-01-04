@@ -23,7 +23,7 @@ module.exports = class extends (
                     required: true
                 },
                 {
-                    name: "maximousuarios",
+                    name: "userslimit",
                     description: "Usuarios maximos. Cero = Sin limite, Ej: 0,2,5,10",
                     type: "STRING",
                     required: true
@@ -36,9 +36,9 @@ module.exports = class extends (
         });
     }
 
-    async execute(interaction, [name, emoji, usersLimit]) {
+    async execute(interaction, {name, emoji, userslimit}) {
         if (!(!!emoji.match(/<a?:.+?:\d+>/) || !!emoji.match(/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g))) return interaction.editReply('El emoji no es valido')
-        let userLimit = usersLimit.split(',')
+        let userLimit = userslimit.split(',')
         let filter = (menu) => {return menu.user.id === interaction.user.id}
         return this.client.database
                 .collection('guilds')
