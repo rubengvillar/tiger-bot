@@ -27,7 +27,7 @@ module.exports = (client) => {
                                     client.store.dispatch(addInteractionsChannels({
                                         guildId: guildCache.id,
                                         channelId: queryChange.doc.data().channelID,
-                                        stream: queryChange.doc.data().stream || false,
+                                        stream: (typeof queryChange.doc.data().stream === Boolean) ? queryChange.doc.data().stream : false,
                                         interactionId: change.doc.id,
                                         ...change.doc.data(),
                                         defaultEmoji: change.doc.data().emoji.replace(/[^0-9]+/g,'') != '' ? queryChange.doc.data().defaultEmoji || '🙂' : change.doc.data().emoji,
@@ -39,11 +39,12 @@ module.exports = (client) => {
                                 }
 
                                 if (change.type === "modified") {
+                                    console.log(typeof queryChange.doc.data().stream === Boolean)
                                     let emoji = change.doc.data().emoji.replace(/[^0-9]+/g,'') != '' ? queryChange.doc.data().defaultEmoji || '🙂' : change.doc.data().emoji
                                     client.store.dispatch(updateInteractionsChannels({
                                         guildId: guildCache.id,
                                         channelId: queryChange.doc.data().channelID,
-                                        stream: queryChange.doc.data().stream || false,
+                                        stream: (typeof queryChange.doc.data().stream === Boolean) ? queryChange.doc.data().stream : false,
                                         interactionId: change.doc.id,
                                         ...change.doc.data(),
                                         defaultEmoji: change.doc.data().emoji.replace(/[^0-9]+/g,'') != '' ? queryChange.doc.data().defaultEmoji || '🙂' : change.doc.data().emoji,
