@@ -70,17 +70,6 @@ module.exports = class extends (
                     .filter((cmd) => interaction.member.permissions.has(cmd.permUser))
                     .map((cmd) => cmd.category)
             );
-            // if (!(message.member.hasPermission("MANAGE_GUILD"))) {
-            //     categories = this.client.utils.removeDuplicates(
-            //         this.client.commands
-            //             .filter((cmd) => message.member.hasPermission(cmd.permUser))
-            //             .map((cmd) => cmd.category)
-            //     );
-            // } else {
-            //     categories = this.client.utils.removeDuplicates(
-            //         this.client.commands.map((cmd) => cmd.category && message.member.hasPermission(cmd.permUser))
-            //     );
-            // }
 
             for (const category of categories) {
                 embed.addField(
