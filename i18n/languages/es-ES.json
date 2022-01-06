@@ -8,6 +8,12 @@
       "help.command.description": "**❯ Descripción:** {{ description }} \n **❯ Ejemplo:** {{ example }} \n **❯ Categoria:** {{ category }} \n **❯ Uso:** {{ usage }}",
       "help.command.existed": "Nombre del comando `{{ command }}` no existe.",
 
+      "ping.load": "Haciendo Ping...",
+      "ping.checking": "Comprobando...",
+      "ping.response.one": "¿Es este realmente mi ping?",
+      "ping.response.two": "¿Esta bien? ¡No puedo mirar!",
+      "ping.response.three": "¡Espero que no esté mal!",
+      
       "music.bots.title": "Estado actual de los bots de música 🎶"
     }
 }
