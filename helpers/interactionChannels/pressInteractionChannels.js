@@ -131,18 +131,21 @@ module.exports = async (client, interaction) =>{
                                 .catch(console.error);
         })
         .then(() => {
-            let denyPermissions = [Permissions.FLAGS.VIEW_CHANNEL]
-            if (!interactionFind.stream) denyPermissions.push(Permissions.FLAGS.STREAM)
+            let denyPermissions = new Permissions()
             if(interactionFind.viewRole != undefined) {
+                denyPermissions.add('VIEW_CHANNEL')
                 permissions.voiceChannel.push({
                     id: interactionFind.viewRole,
                     allow: [Permissions.FLAGS.VIEW_CHANNEL],
                 })
-                permissions.voiceChannel.push({
-                    id: guildId,
-                    deny: denyPermissions
-                })
             }
+            
+            if (!interactionFind.stream) denyPermissions.add('STREAM')
+
+            permissions.voiceChannel.push({
+                id: guildId,
+                deny: denyPermissions
+            })
         })
         .then(() => {
             if (!tempInteractionChannels.length) {
