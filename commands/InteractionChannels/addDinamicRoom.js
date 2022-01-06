@@ -11,7 +11,7 @@ module.exports = class extends (
             usage: "[agregarSalaDinamica]",
             options: [
                 {
-                    name: "nombre",
+                    name: "room",
                     description: "Nombre de la sala Ej: AmongUs, Mesa.",
                     type: "STRING",
                     required: true
@@ -36,8 +36,9 @@ module.exports = class extends (
         });
     }
 
-    async execute(interaction, {name, emoji, userslimit}) {
+    async execute(interaction, {room, emoji, userslimit}) {
         if (!(!!emoji.match(/<a?:.+?:\d+>/) || !!emoji.match(/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g))) return interaction.editReply('El emoji no es valido')
+        if (userslimit.match(/\d,+/)) return interaction.editReply('userslimit: En esta opcion solo admito numeros.')
         let userLimit = userslimit.split(',')
         let filter = (menu) => {return menu.user.id === interaction.user.id}
         return this.client.database
@@ -57,7 +58,7 @@ module.exports = class extends (
                             }
                     })
                     return interaction.editReply({
-                        content: `Emoji: ${emoji}, Nombre: ${name}, Usuarios: ${userLimit}`,
+                        content: `Emoji: ${emoji}, Nombre: ${room}, Usuarios: ${userLimit}`,
                         components: [
                             new MessageActionRow()
                             .addComponents([
@@ -82,7 +83,7 @@ module.exports = class extends (
                             .collection('reactions')
                             .add({
                                 emoji,
-                                category: name,
+                                category: room,
                                 userLimit
                             })
                     })
