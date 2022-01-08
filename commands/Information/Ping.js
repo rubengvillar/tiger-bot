@@ -15,7 +15,10 @@ module.exports = class extends (
     }
 
     async execute(interaction) {
-        const translate = getLocale(interaction, this.client)
+        const translate = getLocale({
+            interaction,
+            client: this.client
+        })
 
         interaction
             .editReply({ content: translate('ping.load') })

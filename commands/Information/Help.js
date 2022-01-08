@@ -20,7 +20,10 @@ module.exports = class extends (
     }
 
     async execute(interaction, { command }) {
-        const translate = getLocale(interaction, this.client)
+        const translate = getLocale({
+            interaction, 
+            client: this.client
+        })
 
         const embed = new MessageEmbed()
             .setColor("BLUE")

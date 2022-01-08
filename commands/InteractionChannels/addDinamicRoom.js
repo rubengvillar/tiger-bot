@@ -1,4 +1,5 @@
 const { MessageEmbed, MessageSelectMenu, MessageActionRow, Permissions } = require("discord.js");
+const getLocale = require("../../helpers/translate/getLocale");
 const Command = require("../../Structures/Command");
 
 module.exports = class extends (
@@ -37,15 +38,29 @@ module.exports = class extends (
     }
 
     async execute(interaction, {room, emoji, userslimit}) {
-        if (!(!!emoji.match(/<a?:.+?:\d+>/) || !!emoji.match(/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g))) return interaction.editReply('El emoji no es valido')
+        // define translate:
+        const translate = getLocale({
+            interaction,
+            client: this.client
+        })
+
+        // validate options:
+        if (!(!!emoji.match(/<a?:.+?:\d+>/) || !!emoji.match(/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g))) return interaction.editReply(translate('adddinamicroom.invalid.emoji'))
         if (userslimit.match(/\d,+/)) return interaction.editReply('userslimit: En esta opcion solo admito numeros.')
+
+        // usersLimit to array:
         let userLimit = userslimit.split(',')
+
+        //filter awaits menus:
         let filter = (menu) => {return menu.user.id === interaction.user.id}
+
+        // search dinamic rooms
         return this.client.database
                 .collection('guilds')
                 .doc(interaction.guild.id)
                 .collection('reactionVoices')
                 .get()
+                // return all dinamic rooms:
                 .then(async reactionVoices => {
                     if(reactionVoices.empty){
                         return interaction.editReply('No tengo registradas salas dinámicas.')
@@ -58,7 +73,11 @@ module.exports = class extends (
                             }
                     })
                     return interaction.editReply({
-                        content: `Emoji: ${emoji}, Nombre: ${room}, Usuarios: ${userLimit}`,
+                        content: translate('adddinamicroom.newroom', {
+                            emoji,
+                            room,
+                            userLimit
+                        }),
                         components: [
                             new MessageActionRow()
                             .addComponents([
@@ -87,7 +106,7 @@ module.exports = class extends (
                                 userLimit
                             })
                     })
-                    .then(() => interaction.editReply({content: 'La sala fue añadida con exito', components: []}))
+                    .then(() => interaction.editReply({content: translate('adddinamicroom.success'), components: []}))
                 })
                 .catch(console.error)
     }
