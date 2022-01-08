@@ -1,19 +1,54 @@
 {
     "translation": {
-      "hello": "Hola",
+
       "help.title": "Menu de ayuda",
       "help.description": "Estos son los comandos disponibles para {{ guild }}",
       "help.slashcommands": "Ahora todos mis comandos son con: ",
       "help.command.title": "Ayuda del comando: {{ command }}",
       "help.command.description": "**❯ Descripción:** {{ description }} \n **❯ Ejemplo:** {{ example }} \n **❯ Categoria:** {{ category }} \n **❯ Uso:** {{ usage }}",
-      "help.command.existed": "Nombre del comando `{{ command }}` no existe.",
-
-      "ping.load": "Haciendo Ping...",
-      "ping.checking": "Comprobando...",
-      "ping.response.one": "¿Es este realmente mi ping?",
-      "ping.response.two": "¿Esta bien? ¡No puedo mirar!",
-      "ping.response.three": "¡Espero que no esté mal!",
+      "help.command.existed": "El nombre del comando `{{ command }}` no existe.",
       
+      "ping" : {
+        "load": "Haciendo Ping...",
+        "checking": "Comprobando...",
+        "response": {
+          "one": "¿Es este realmente mi ping?",
+          "two": "¿Esta bien? ¡No puedo mirar!",
+          "three": "¡Espero que no esté mal!"
+        }
+      },
+      "adddinamicroom": {
+        "invalid" : {
+          "emoji": "⚠️ La informacacion ingresada no corresponde a un emoji valido",
+          "userlimit": "⚠️ userslimit: En esta opcion solo admito numeros.",
+          "notrooms": "⚠️ No tengo registradas salas dinámicas."
+        },
+        "newroom": "Emoji: {{ emoji }}, Nombre: {{ room }}, Usuarios: {{ userLimit }}",
+        "selectdinamicroom": "Seleccione a donde quiere agregar la sala",
+        "success": "🟢 La sala fue añadida con exito"
+      },      
+      
+      "createdinamicroom" : {
+        "invalid": {
+          "invalid.option": "⚠️ Opción no valida",
+          "emoji.default": "⚠️ El emoji enviado no pertence a los emojis por defecto de discord."
+        },
+        "reply": {
+          "title": "Salas dinamicas.",
+          "description": "Ahora voy a ir creando las salas dinamicas según me indiques."
+        },
+        "channel": {
+          "panel": "🎛️ Panel de control",
+          "rooms": {
+            "name": "📲 Salas dinamicas",
+            "message": {
+              "title": "Selecciona una sala de: {{ category }}"
+            }
+          },
+          "waiting": "⏳ Sala de espera"
+        }
+      },
+
       "music.bots.title": "Estado actual de los bots de música 🎶"
     }
 }
