@@ -58,7 +58,7 @@ module.exports = class Util {
                             }
                         })
         
-                        this.client.on("ready", ()=>{
+                        this.client.on("ready", async ()=>{
                             this.client.guilds.cache.map(async guild => {
                                 // let commandsTemp = commandsList
                                 // commandsTemp.map(command => {
@@ -70,7 +70,7 @@ module.exports = class Util {
                                 //     })
                                 //     return command
                                 // })
-                                if (!guild.members.cache.get(this.client.user.id).permissions.has(Permissions.FLAGS.USE_APPLICATION_COMMANDS)) return console.log(`Sin permisos`)
+                                if (!guild.members.cache.get(this.client.user.id)?.permissions.has(Permissions.FLAGS.USE_APPLICATION_COMMANDS)) return console.log(`Sin permisos`)
                                 await this.client.application.commands.set(commandsList, guild.id)
                                     // .then(console.log)
                                     .catch(console.error);
@@ -85,7 +85,8 @@ module.exports = class Util {
                             });
 
                             // Register for all the guilds the bot is in
-                            // this.client.application.commands.set(arrayOfSlashCommands);
+                            await this.client.application.commands.set([]);
+                            // await this.client.application.commands.set(commandsList);
                         })
                     }
                 );
