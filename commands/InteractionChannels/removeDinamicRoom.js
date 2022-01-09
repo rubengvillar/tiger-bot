@@ -1,4 +1,5 @@
 const { MessageEmbed, MessageSelectMenu, MessageActionRow, Permissions } = require("discord.js");
+const getLocale = require("../../helpers/translate/getLocale");
 const Command = require("../../Structures/Command");
 
 module.exports = class extends (
@@ -16,7 +17,12 @@ module.exports = class extends (
         });
     }
 
-    async execute(interaction, ) {
+    async execute(interaction) {
+        const translate = getLocale({
+            interaction,
+            client: this.client
+        })
+
         let filter = (menu) => {return menu.user.id === interaction.user.id}
         let reactionVoiceSelect
 
@@ -26,8 +32,11 @@ module.exports = class extends (
                 .collection('reactionVoices')
                 .get()
                 .then(async reactionVoices => {
-                    if(reactionVoices.empty){
-                        return interaction.editReply('No tengo registradas salas dinámicas.')
+                    if(reactionVoices.empty) {
+                        throw {
+                            type: 'validate',
+                            message: translate('notdinamicrooms')
+                        }
                     }
                     let messageChannelsDinamicsOptions = await reactionVoices.docs.map(doc => {
                         return {
@@ -37,14 +46,14 @@ module.exports = class extends (
                             }
                     })
                     return interaction.editReply({
-                        content: `De donde queres eliminar salas?`,
+                        content: translate('removedinamicroom.content.selectroom'),
                         components: [
                             new MessageActionRow()
                             .addComponents([
                                 new MessageSelectMenu()
                                     .addOptions(messageChannelsDinamicsOptions)
                                     .setCustomId('Menu_salas')
-                                    .setPlaceholder('Salas dinamicas')
+                                    .setPlaceholder(translate('selectroom'))
                                     .setMinValues(1)
                                     .setMaxValues(1)
                             ])
@@ -69,19 +78,20 @@ module.exports = class extends (
 
                             return  {
                                 label: `${doc.data().category}`,
-                                description: `Limites de usuarios: ${doc.data().userLimit.join(', ')}`,
+                                description: translate('removedinamicrooms.limitUsers', { limitUsers: doc.data().userLimit.join(', ')}),
                                 value: doc.id,
                                 emoji: emoji
                             }
                         })
                         return interaction.editReply(
-                            {content: 'Elegi las reacciones a eliminar.',
+                            {content: translate('removedinamicroom.select.remove.romms'),
                             components: [new MessageActionRow()
-                            .addComponents([new MessageSelectMenu()
-                                .addOptions(reactionOptions)
-                                .setCustomId('reacciones')
-                                .setMinValues(1)
-                                .setMaxValues(reactionOptions.length)
+                            .addComponents([
+                                new MessageSelectMenu()
+                                    .addOptions(reactionOptions)
+                                    .setCustomId('reacciones')
+                                    .setMinValues(1)
+                                    .setMaxValues(reactionOptions.length)
                             ])]
                         })
                     })
@@ -102,9 +112,12 @@ module.exports = class extends (
                 
         })
         .then(() => interaction.editReply({
-            content: '🗑️ - Las reacciones seleccionadas fueron borradas.',
+            content: translate('removedinamicroom.removed.rooms'),
             components: []
         }))
-        .catch(console.error)
+        .catch(err => {
+            if (err.type === 'validate') return interaction.editReply(err.message)
+            console.log(err)
+        })
     }
 }

@@ -145,6 +145,7 @@ module.exports = class extends (
             interaction,
             client: this.client
         })
+        
         const guildStore = this.client.store.getState().guilds.filter(guild => guild.id === interaction.guild.id)[0]
         const errorEmbed = new MessageEmbed()
             .setTitle(translate('createdinamicroom.invalid.option'))
@@ -308,7 +309,7 @@ module.exports = class extends (
                                 .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
                                 .setImage(interaction.guild.bannerURL())
                                 .setDescription(`${description}`)
-                                .addField('Uso: ',`Para crear una sala conectese a ${result.awaiting} y presione el boton de la sala que quiere crear.`)
+                                .addField(translate('createdinamicroom.channel.rooms.message.use.title'), translate('createdinamicroom.channel.rooms.message.use.message', {awaiting: result.awaiting}))
                                 .setColor(selectColor)
                             ]
                     })
@@ -316,9 +317,9 @@ module.exports = class extends (
                         return result.panel.send({
                             embeds: [
                                 new MessageEmbed()
-                                    .setTitle(`Panel de control de: ${category}`)
+                                    .setTitle(translate('createdinamicroom.channel.panel.channel', { category }))
                                     .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
-                                    .setDescription(`Estas opciones estan en desarrollo pronto estaran listas.`)
+                                    .setDescription(translate('createdinamicroom.channel.panel.channel.description'))
                                     .setColor(selectColor)
                                 ]
                         })
@@ -360,7 +361,12 @@ module.exports = class extends (
                         embeds: [
                             dinamicEmbed
                                 .setColor('GREEN')
-                                .addField('Canales creados:',`${result.awaiting}, ${result.panel}, ${result.interactor}. Dentro de la categoría **${result.category}**`) ]})
+                                .addField(translate('createdinamicroom.reply.edit.channels.title'), translate('createdinamicroom.reply.edit.channels.message', { 
+                                    awaiting: result.awaiting, 
+                                    panel: result.panel, 
+                                    interactor: result.interactor,
+                                    category: result.category,
+                                })) ]})
                 })
                 .then(() => {
                     console.log(result)

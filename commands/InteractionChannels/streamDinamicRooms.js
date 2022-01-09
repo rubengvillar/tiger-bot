@@ -1,4 +1,5 @@
 const { MessageEmbed, MessageSelectMenu, MessageActionRow, Permissions } = require("discord.js");
+const getLocale = require("../../helpers/translate/getLocale");
 const Command = require("../../Structures/Command");
 
 module.exports = class extends (
@@ -25,8 +26,13 @@ module.exports = class extends (
     }
 
     async execute(interaction, {stream}) {
+        const translate = getLocale({
+            interaction,
+            client: this.client
+        })
+        
         let filter = (menu) => {return menu.user.id === interaction.user.id}
-        console.log(stream)
+
         return this.client.database
                 .collection('guilds')
                 .doc(interaction.guild.id)
@@ -34,7 +40,10 @@ module.exports = class extends (
                 .get()
                 .then(async reactionVoices => {
                     if(reactionVoices.empty){
-                        return interaction.editReply('No tengo registradas salas dinámicas.')
+                        throw {
+                            type: 'validate',
+                            message: translate('notdinamicrooms')
+                        }
                     }
                     let messageChannelsDinamicsOptions = await reactionVoices.docs.map(doc => {
                         return {
@@ -43,15 +52,16 @@ module.exports = class extends (
                                 value: doc.id,
                             }
                     })
+
                     return interaction.editReply({
-                        content: `Donde ${stream ? 'podran': 'no podran'} prender camara o compartir pantalla?`,
+                        content: translate('streamdinamicroom.content', { context: `${stream}`} ),
                         components: [
                             new MessageActionRow()
                             .addComponents([
                                 new MessageSelectMenu()
                                     .addOptions(messageChannelsDinamicsOptions)
                                     .setCustomId('role_channels_dinamics')
-                                    .setPlaceholder('Seleccione donde quiere cambiar esta opción.')
+                                    .setPlaceholder(translate('selectroom'))
                                     .setMinValues(1)
                                     .setMaxValues(1)
                             ])
@@ -70,8 +80,12 @@ module.exports = class extends (
                                 stream
                             }, { merge: true })
                     })
-                    .then(() => interaction.editReply({content: 'Ahora los usuarios podran prender camara o compartir.', components: []}))
+                    .then(() => interaction.editReply({content: translate('streamdinamicroom.success', { context: `${stream}`} ), components: []}))
                 })
-                .catch(console.error)
+                .catch(err => {
+                    console.log(err)
+                    if (err.type === 'validate') return interaction.editReply(err.message)
+                    console.log(err)
+                })
     }
 }

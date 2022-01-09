@@ -1,4 +1,5 @@
 const { MessageEmbed, MessageSelectMenu, MessageActionRow, Permissions } = require("discord.js");
+const getLocale = require("../../helpers/translate/getLocale");
 const Command = require("../../Structures/Command");
 
 module.exports = class extends (
@@ -25,6 +26,10 @@ module.exports = class extends (
     }
 
     async execute(interaction, {rol}) {
+        const translate = getLocale({
+            interaction,
+            client: this.client
+        })
         let filter = (menu) => {return menu.user.id === interaction.user.id}
         return this.client.database
                 .collection('guilds')
@@ -33,7 +38,10 @@ module.exports = class extends (
                 .get()
                 .then(async reactionVoices => {
                     if(reactionVoices.empty){
-                        return interaction.editReply('No tengo registradas salas dinámicas.')
+                        throw {
+                            type: 'validate',
+                            message: translate('notdinamicrooms')
+                        }
                     }
                     let messageChannelsDinamicsOptions = await reactionVoices.docs.map(doc => {
                         return {
@@ -43,14 +51,14 @@ module.exports = class extends (
                             }
                     })
                     return interaction.editReply({
-                        content: `Rol a agregar: ${rol}, Donde deseas agregarlo?`,
+                        content: translate('roldinamicroom.content', { rol }),
                         components: [
                             new MessageActionRow()
                             .addComponents([
                                 new MessageSelectMenu()
                                     .addOptions(messageChannelsDinamicsOptions)
                                     .setCustomId('role_channels_dinamics')
-                                    .setPlaceholder('Seleciona donde queres agregar el rol.')
+                                    .setPlaceholder(translate('selectroom'))
                                     .setMinValues(1)
                                     .setMaxValues(1)
                             ])
@@ -69,8 +77,11 @@ module.exports = class extends (
                                 viewRole: rol
                             }, { merge: true })
                     })
-                    .then(() => interaction.editReply({content: 'El rol fue añadido con exito.', components: []}))
+                    .then(() => interaction.editReply({content: translate('roldinamicroom.success'), components: []}))
                 })
-                .catch(console.error)
+                .catch(err => {
+                    if (err.type === 'validate') return interaction.editReply(err.message)
+                    console.log(err)
+                })
     }
 }

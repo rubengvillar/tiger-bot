@@ -17,6 +17,7 @@
           "three": "¡Espero que no esté mal!"
         }
       },
+
       "adddinamicroom": {
         "invalid" : {
           "emoji": "⚠️ La informacacion ingresada no corresponde a un emoji valido",
@@ -35,18 +36,60 @@
         },
         "reply": {
           "title": "Salas dinamicas.",
-          "description": "Ahora voy a ir creando las salas dinamicas según me indiques."
+          "description": "Ahora voy a ir creando las salas dinamicas según me indiques.",
+          "edit": {
+            "content": "Salas dinamicas",
+            "channels": {
+              "title": "Canales creados",
+              "message": " {{ result.awaiting }} , {{ result.panel }}, {{ result.interactor }}. Dentro de la categoría **{{ result.category }}**"
+            }
+          }
         },
+
         "channel": {
-          "panel": "🎛️ Panel de control",
+          "panel": {
+            "channel": "🎛️ Panel de control",
+            "message": {
+              "title": "Panel de control de: {{ category }}",
+              "description": "Estas opciones estan en desarrollo pronto estaran listas."
+            }
+          },
           "rooms": {
             "name": "📲 Salas dinamicas",
             "message": {
-              "title": "Selecciona una sala de: {{ category }}"
+              "title": "Selecciona una sala de: {{ category }}",
+              "use": {
+                "title": "Uso: ",
+                "message": "Para crear una sala conectese a {{ awaiting }} y presione el boton de la sala que quiere crear."
+              }
             }
           },
           "waiting": "⏳ Sala de espera"
         }
+      },
+
+      "notdinamicrooms": "No tengo registradas salas dinámicas",
+      "selectroom": "Seleccione una sala",
+
+      "removedinamicroom": {
+        "content.selectroom": "De donde queres eliminar salas?",
+        "selectroom": "Seleccione una sala",
+        "limitUsers" : "Limites de usuarios: {{ limitUsers }}",
+        "select.remove.romms": "Elegi las salas a eliminar.",
+        "removed.rooms": "🗑️ - Las reacciones seleccionadas fueron borradas."
+      },
+
+      "roldinamicroom": {
+        "content": "Rol a agregar: {{ rol }}, Donde deseas agregarlo?",
+        "select": "Selecciona una sala dinamica",
+        "success": "El rol fue añadido con exito."
+      },
+
+      "streamdinamicroom": {
+        "content_true": "Donde podran prender camara o compartir pantalla",
+        "content_false": "Donde no podran prender camara o compartir pantalla",
+        "success_true": "Ahora los usuarios podran prender camara o compartir en estas salas.",
+        "success_false": "Ahora los usuarios no podran prender camara o compartir en estas salas."
       },
 
       "music.bots.title": "Estado actual de los bots de música 🎶"
