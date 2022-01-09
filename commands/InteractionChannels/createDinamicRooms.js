@@ -2,6 +2,7 @@ const { MessageEmbed, Permissions } = require("discord.js");
 const Command = require("../../Structures/Command");
 const createChannel = require("../../helpers/createChannel");
 const createReactions = require("../../helpers/createReactions");
+const getLocale = require("../../helpers/translate/getLocale");
 
 module.exports = class extends (
     Command
@@ -44,7 +45,7 @@ module.exports = class extends (
                 },
                 {
                     name: "color",
-                    description: "Color del embed",
+                    description: "Selected embed message buttons color",
                     type: "STRING",
                     choices: [
                         {
@@ -100,15 +101,15 @@ module.exports = class extends (
                             value: 'NAVY'
                         },
                         {
-                            name: 'Amarillo',
+                            name: 'YELLOW',
                             value: 'YELLOW'
                         },
                         {
-                            name: 'Negro',
+                            name: 'BLACK',
                             value: 'BLACK'
                         },
                         {
-                            name: 'Blanco',
+                            name: 'WHITE',
                             value: 'WHITE'
                         },
                         {
@@ -140,9 +141,14 @@ module.exports = class extends (
     }
 
     async execute(interaction, { category, gestion, emoji, description,  viewRole, color }) {
+        const translate = getLocale({
+            interaction,
+            client: this.client
+        })
+        
         const guildStore = this.client.store.getState().guilds.filter(guild => guild.id === interaction.guild.id)[0]
         const errorEmbed = new MessageEmbed()
-            .setTitle('Opción no valida')
+            .setTitle(translate('createdinamicroom.invalid.option'))
             .setColor('ORANGE')
         let resultados = {}
         let Reactions = []
@@ -190,14 +196,13 @@ module.exports = class extends (
             return interaction.editReply({
                 content: `${interaction.member}`,
                 embeds: [
-                    errorEmbed.setDescription('El emoji enviado no pertence a los emojis por defecto de discord.')
+                    errorEmbed.setDescription(translate('createdinamicroom.invalid.emoji.default'))
                 ]
             })
         
         const dinamicEmbed = new MessageEmbed()
-            .setTitle('Canales de interacción')
-            .setDescription(
-                `Los **canales de interaccion** son canales que responden a **botones**. De tal manera voy a crear una categoria con: **Panel de control, Creador de canales, Sala de espera.**`)
+            .setTitle(translate('createdinamicroom.reply'))
+            .setDescription(translate('createdinamicroom.reply.description'))
             .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
             .setColor('YELLOW')
 
@@ -207,72 +212,89 @@ module.exports = class extends (
                 })
                 .then(reactions => Reactions = reactions)
                 .then(() => {
-                    return createChannel(interaction.guild, `${emoji} | ${category}`, {
-                        type: 'GUILD_CATEGORY',
-                        permissionOverwrites: [
-                            {
-                                id: interaction.guild.id,
-                                deny: [
-                                    Permissions.FLAGS.SEND_MESSAGES,
-                                    Permissions.FLAGS.SPEAK,
-                                    Permissions.FLAGS.STREAM,
-                                    Permissions.FLAGS.ADD_REACTIONS,
-                                ]
-                            },{
-                                id: this.client.user.id,
-                                allow: [
-                                    Permissions.FLAGS.SEND_MESSAGES,
-                                    Permissions.FLAGS.SPEAK,
-                                    Permissions.FLAGS.STREAM,
-                                    Permissions.FLAGS.ADD_REACTIONS,
-                                ]
-                            }
-                        ]
-                    })
+                    return createChannel({
+                        guild: interaction.guild, 
+                        name: `${emoji} | ${category}`, 
+                        options: {
+                            type: 'GUILD_CATEGORY',
+                            permissionOverwrites: [
+                                {
+                                    id: interaction.guild.id,
+                                    deny: [
+                                        Permissions.FLAGS.SEND_MESSAGES,
+                                        Permissions.FLAGS.SPEAK,
+                                        Permissions.FLAGS.STREAM,
+                                        Permissions.FLAGS.ADD_REACTIONS,
+                                    ]
+                                },{
+                                    id: this.client.user.id,
+                                    allow: [
+                                        Permissions.FLAGS.SEND_MESSAGES,
+                                        Permissions.FLAGS.SPEAK,
+                                        Permissions.FLAGS.STREAM,
+                                        Permissions.FLAGS.ADD_REACTIONS,
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                        )
                 })
                 .then(category => {
-                    return createChannel(interaction.guild, '🎛️ Panel de Control', {
-                        parent: category.id,
-                        permissionOverwrites: [
-                            {
-                                id: interaction.guild.id,
-                                deny: [
-                                    Permissions.FLAGS.SPEAK,
-                                    Permissions.FLAGS.STREAM,
-                                    Permissions.FLAGS.ADD_REACTIONS,
-                                    Permissions.FLAGS.VIEW_CHANNEL
-                                ]
-                            },{
-                                id: this.client.user.id,
-                                allow: [
-                                    Permissions.FLAGS.VIEW_CHANNEL,
-                                    Permissions.FLAGS.SEND_MESSAGES,
-                                    Permissions.FLAGS.SPEAK,
-                                    Permissions.FLAGS.STREAM,
-                                    Permissions.FLAGS.ADD_REACTIONS,
-                                ]
-                            },
-                            {
-                                id: gestion,
-                                allow: [
-                                    Permissions.FLAGS.VIEW_CHANNEL,
-                                    Permissions.FLAGS.SEND_MESSAGES,
-                                ]
-                            }
-                        ]
+                    return createChannel({
+                        guild: interaction.guild, 
+                        name: translate('createdinamicroom.channel.panel'), 
+                        options: {
+                            parent: category.id,
+                            permissionOverwrites: [
+                                {
+                                    id: interaction.guild.id,
+                                    deny: [
+                                        Permissions.FLAGS.SPEAK,
+                                        Permissions.FLAGS.STREAM,
+                                        Permissions.FLAGS.ADD_REACTIONS,
+                                        Permissions.FLAGS.VIEW_CHANNEL
+                                    ]
+                                },{
+                                    id: this.client.user.id,
+                                    allow: [
+                                        Permissions.FLAGS.VIEW_CHANNEL,
+                                        Permissions.FLAGS.SEND_MESSAGES,
+                                        Permissions.FLAGS.SPEAK,
+                                        Permissions.FLAGS.STREAM,
+                                        Permissions.FLAGS.ADD_REACTIONS,
+                                    ]
+                                },
+                                {
+                                    id: gestion,
+                                    allow: [
+                                        Permissions.FLAGS.VIEW_CHANNEL,
+                                        Permissions.FLAGS.SEND_MESSAGES,
+                                    ]
+                                }
+                            ]
+                        }
                     })
                     .then( panel => {
-                        return createChannel(interaction.guild, '📲 Creador de canales', {
-                            parent: category.id
+                        return createChannel({
+                            guild: interaction.guild, 
+                            name: translate('createdinamicroom.channel.rooms'), 
+                            options: {
+                                parent: category.id
+                            }
                         })
                         .then(interactor =>{
                             return {panel, interactor, category}
                         })
                     })
                     .then(channels => {
-                        return createChannel(interaction.guild, '⏳ Sala de espera', {
-                            type: 'GUILD_VOICE',
-                            parent: category.id
+                        return createChannel({
+                            guild: interaction.guild, 
+                            name: translate('createdinamicroom.channel.waiting'), 
+                            options: {
+                                type: 'GUILD_VOICE',
+                                parent: category.id
+                            }
                         })
                         .then(awaiting => {
                             return { awaiting,  ...channels}
@@ -283,11 +305,11 @@ module.exports = class extends (
                     return result.interactor.send({
                         embeds: [
                             new MessageEmbed()
-                                .setTitle(`Selecciona una sala de: ${category}`)
+                                .setTitle(translate('createdinamicroom.channel.rooms.message.title', { category }))
                                 .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
                                 .setImage(interaction.guild.bannerURL())
                                 .setDescription(`${description}`)
-                                .addField('Uso: ',`Para crear una sala conectese a ${result.awaiting} y presione el boton de la sala que quiere crear.`)
+                                .addField(translate('createdinamicroom.channel.rooms.message.use.title'), translate('createdinamicroom.channel.rooms.message.use.message', {awaiting: result.awaiting}))
                                 .setColor(selectColor)
                             ]
                     })
@@ -295,9 +317,9 @@ module.exports = class extends (
                         return result.panel.send({
                             embeds: [
                                 new MessageEmbed()
-                                    .setTitle(`Panel de control de: ${category}`)
+                                    .setTitle(translate('createdinamicroom.channel.panel.channel', { category }))
                                     .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
-                                    .setDescription(`Estas opciones estan en desarrollo pronto estaran listas.`)
+                                    .setDescription(translate('createdinamicroom.channel.panel.channel.description'))
                                     .setColor(selectColor)
                                 ]
                         })
@@ -339,7 +361,12 @@ module.exports = class extends (
                         embeds: [
                             dinamicEmbed
                                 .setColor('GREEN')
-                                .addField('Canales creados:',`${result.awaiting}, ${result.panel}, ${result.interactor}. Dentro de la categoría **${result.category}**`) ]})
+                                .addField(translate('createdinamicroom.reply.edit.channels.title'), translate('createdinamicroom.reply.edit.channels.message', { 
+                                    awaiting: result.awaiting, 
+                                    panel: result.panel, 
+                                    interactor: result.interactor,
+                                    category: result.category,
+                                })) ]})
                 })
                 .then(() => {
                     console.log(result)

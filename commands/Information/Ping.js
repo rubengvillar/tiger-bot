@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
+const getLocale = require("../../helpers/translate/getLocale");
 const Command = require("../../Structures/Command");
 
 module.exports = class extends (
@@ -14,21 +15,26 @@ module.exports = class extends (
     }
 
     async execute(interaction) {
+        const translate = getLocale({
+            interaction,
+            client: this.client
+        })
+
         interaction
-            .editReply({ content: "Pinging..." })
+            .editReply({ content: translate('ping.load') })
             .then(() => new Date())
             .then(async timing => {
-                await interaction.editReply({content: 'Comprobando...' })
+                await interaction.editReply({content: translate('ping.checking') })
                 return timing
             })
             .then(timing => new Date() - timing)
             .then(latency => {
                 const choices = [
-                    "¿Es este realmente mi ping?",
-                    "¿Esta bien? ¡No puedo mirar!",
-                    "¡Espero que no esté mal!",
+                    () => translate('ping.response.one'),
+                    () => translate('ping.response.two'),
+                    () => translate('ping.response.three'),
                 ];
-                const response = choices[Math.floor(Math.random() * choices.length)];
+                const response = choices[Math.floor(Math.random() * choices.length)]();
                 return interaction.editReply(
                     `${response}, Bot Latency: \`${latency}ms\`, API latency: \`${Math.round(
                         this.client.ws.ping

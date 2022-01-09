@@ -27,7 +27,10 @@ module.exports.slashCommands = async (client, interaction) => {
                 if (!interaction.member.permissions.has(cmd.permUser)) return interaction.editReply(`"❌ Permisos insuficientes... ${cmd.permUser.join(", ")}"`);
                 return cmd.execute(interaction, args);
             })
-            .catch(console.error)
+            .catch(err => {
+                if (err.type === 'validate') return interaction.editReply(err.message)
+                console.error(err)
+            })
         
     } catch (error) {
 		console.error(error);

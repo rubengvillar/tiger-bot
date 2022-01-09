@@ -1,4 +1,5 @@
 const { MessageEmbed, MessageSelectMenu, MessageActionRow, Permissions } = require("discord.js");
+const getLocale = require("../../helpers/translate/getLocale");
 const Command = require("../../Structures/Command");
 
 module.exports = class extends (
@@ -6,16 +7,16 @@ module.exports = class extends (
 ) {
     constructor(...args) {
         super(...args, {
-            description: "Permitir que puedan prender camara a partir en todas las salas dinamicas seleccionadas.",
+            description: "Agrega una sala a la Sala dinamica seleccionada.",
             category: "Salas dinamicas",
-            usage: "[streamSalaDinamica]",
+            usage: "[agregarSalaDinamica]",
             options: [
                 {
-                    name: "stream",
-                    description: "Pueden o no prender camara en una sala.",
-                    type: "BOOLEAN",
+                    name: "rol",
+                    description: "Selecciona un rol para que Solo puedan ver una sala los que tengan el rol.",
+                    type: "ROLE",
                     required: true
-                }
+                },
             ],
             permUser: [
                 Permissions.FLAGS.MANAGE_GUILD
@@ -24,9 +25,12 @@ module.exports = class extends (
         });
     }
 
-    async execute(interaction, {stream}) {
+    async execute(interaction, {rol}) {
+        const translate = getLocale({
+            interaction,
+            client: this.client
+        })
         let filter = (menu) => {return menu.user.id === interaction.user.id}
-        console.log(stream)
         return this.client.database
                 .collection('guilds')
                 .doc(interaction.guild.id)
@@ -34,7 +38,10 @@ module.exports = class extends (
                 .get()
                 .then(async reactionVoices => {
                     if(reactionVoices.empty){
-                        return interaction.editReply('No tengo registradas salas dinámicas.')
+                        throw {
+                            type: 'validate',
+                            message: translate('notdinamicrooms')
+                        }
                     }
                     let messageChannelsDinamicsOptions = await reactionVoices.docs.map(doc => {
                         return {
@@ -44,14 +51,14 @@ module.exports = class extends (
                             }
                     })
                     return interaction.editReply({
-                        content: `Donde ${stream ? 'podran': 'no podran'} prender camara o compartir pantalla?`,
+                        content: translate('roldinamicroom.content', { rol }),
                         components: [
                             new MessageActionRow()
                             .addComponents([
                                 new MessageSelectMenu()
                                     .addOptions(messageChannelsDinamicsOptions)
                                     .setCustomId('role_channels_dinamics')
-                                    .setPlaceholder('Seleccione donde quiere cambiar esta opción.')
+                                    .setPlaceholder(translate('selectroom'))
                                     .setMinValues(1)
                                     .setMaxValues(1)
                             ])
@@ -67,11 +74,14 @@ module.exports = class extends (
                             .collection('reactionVoices')
                             .doc(resp.values[0])
                             .set({
-                                stream
+                                viewRole: rol
                             }, { merge: true })
                     })
-                    .then(() => interaction.editReply({content: 'Ahora los usuarios podran prender camara o compartir.', components: []}))
+                    .then(() => interaction.editReply({content: translate('roldinamicroom.success'), components: []}))
                 })
-                .catch(console.error)
+                .catch(err => {
+                    if (err.type === 'validate') return interaction.editReply(err.message)
+                    console.log(err)
+                })
     }
 }

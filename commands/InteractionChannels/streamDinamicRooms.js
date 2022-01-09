@@ -1,4 +1,5 @@
 const { MessageEmbed, MessageSelectMenu, MessageActionRow, Permissions } = require("discord.js");
+const getLocale = require("../../helpers/translate/getLocale");
 const Command = require("../../Structures/Command");
 
 module.exports = class extends (
@@ -6,28 +7,16 @@ module.exports = class extends (
 ) {
     constructor(...args) {
         super(...args, {
-            description: "Agrega una sala a la Sala dinamica seleccionada.",
+            description: "Permitir que puedan prender camara a partir en todas las salas dinamicas seleccionadas.",
             category: "Salas dinamicas",
-            usage: "[agregarSalaDinamica]",
+            usage: "[streamSalaDinamica]",
             options: [
                 {
-                    name: "nombre",
-                    description: "Nombre de la sala Ej: AmongUs, Mesa.",
-                    type: "STRING",
+                    name: "stream",
+                    description: "Pueden o no prender camara en una sala.",
+                    type: "BOOLEAN",
                     required: true
-                },
-                {
-                    name: "emoji",
-                    description: "Seleccione un emoji",
-                    type: "STRING",
-                    required: true
-                },
-                {
-                    name: "userslimit",
-                    description: "Usuarios maximos. Cero = Sin limite, Ej: 0,2,5,10",
-                    type: "STRING",
-                    required: true
-                },
+                }
             ],
             permUser: [
                 Permissions.FLAGS.MANAGE_GUILD
@@ -36,10 +25,14 @@ module.exports = class extends (
         });
     }
 
-    async execute(interaction, {name, emoji, userslimit}) {
-        if (!(!!emoji.match(/<a?:.+?:\d+>/) || !!emoji.match(/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g))) return interaction.editReply('El emoji no es valido')
-        let userLimit = userslimit.split(',')
+    async execute(interaction, {stream}) {
+        const translate = getLocale({
+            interaction,
+            client: this.client
+        })
+        
         let filter = (menu) => {return menu.user.id === interaction.user.id}
+
         return this.client.database
                 .collection('guilds')
                 .doc(interaction.guild.id)
@@ -47,7 +40,10 @@ module.exports = class extends (
                 .get()
                 .then(async reactionVoices => {
                     if(reactionVoices.empty){
-                        return interaction.editReply('No tengo registradas salas dinámicas.')
+                        throw {
+                            type: 'validate',
+                            message: translate('notdinamicrooms')
+                        }
                     }
                     let messageChannelsDinamicsOptions = await reactionVoices.docs.map(doc => {
                         return {
@@ -56,22 +52,23 @@ module.exports = class extends (
                                 value: doc.id,
                             }
                     })
+
                     return interaction.editReply({
-                        content: `Emoji: ${emoji}, Nombre: ${name}, Usuarios: ${userLimit}`,
+                        content: translate('streamdinamicroom.content', { context: `${stream}`} ),
                         components: [
                             new MessageActionRow()
                             .addComponents([
                                 new MessageSelectMenu()
                                     .addOptions(messageChannelsDinamicsOptions)
-                                    .setCustomId('Menu_salas')
-                                    .setPlaceholder('Seleccione a donde quiere agregar la sala')
+                                    .setCustomId('role_channels_dinamics')
+                                    .setPlaceholder(translate('selectroom'))
                                     .setMinValues(1)
                                     .setMaxValues(1)
                             ])
                         ]
                     })
                     .then(msg => {
-                        return msg.awaitMessageComponent({ filter, componentType: 'SELECT_MENU', time: 60000 })
+                        return msg.awaitMessageComponent({ filter, componentType: 'SELECT_MENU', time: 60000, max: 1 })
                     })
                     .then(async resp => {
                         return this.client.database
@@ -79,15 +76,16 @@ module.exports = class extends (
                             .doc(interaction.guild.id)
                             .collection('reactionVoices')
                             .doc(resp.values[0])
-                            .collection('reactions')
-                            .add({
-                                emoji,
-                                category: name,
-                                userLimit
-                            })
+                            .set({
+                                stream
+                            }, { merge: true })
                     })
-                    .then(() => interaction.editReply({content: 'La sala fue añadida con exito', components: []}))
+                    .then(() => interaction.editReply({content: translate('streamdinamicroom.success', { context: `${stream}`} ), components: []}))
                 })
-                .catch(console.error)
+                .catch(err => {
+                    console.log(err)
+                    if (err.type === 'validate') return interaction.editReply(err.message)
+                    console.log(err)
+                })
     }
 }

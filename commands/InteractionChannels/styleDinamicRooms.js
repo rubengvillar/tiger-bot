@@ -1,4 +1,5 @@
 const { MessageEmbed, MessageSelectMenu, MessageActionRow, Permissions } = require("discord.js");
+const getLocale = require("../../helpers/translate/getLocale");
 const Command = require("../../Structures/Command");
 
 module.exports = class extends (
@@ -26,6 +27,11 @@ module.exports = class extends (
     }
 
     async execute( interaction, {style} ) {
+        const translate = getLocale({
+            interaction,
+            client: this.client
+        })
+        
         let filter = (menu) => {return menu.user.id === interaction.user.id}
         return this.client.database
                 .collection('guilds')
@@ -34,7 +40,10 @@ module.exports = class extends (
                 .get()
                 .then(async reactionVoices => {
                     if(reactionVoices.empty){
-                        return interaction.editReply('No tengo registradas salas dinámicas.')
+                        throw {
+                            type: 'validate',
+                            message: translate('notdinamicrooms')
+                        }
                     }
                     let messageChannelsDinamicsOptions = await reactionVoices.docs.map(doc => {
                         return {
@@ -72,6 +81,9 @@ module.exports = class extends (
                     })
                     .then(() => interaction.editReply({content: 'Ahora las salas dinamicas se veran con el estilo de tu server.', components: []}))
                 })
-                .catch(console.error)
+                .catch(err => {
+                    if (err.type === 'validate') return interaction.editReply(err.message)
+                    console.log(err)
+                })
     }
 }
