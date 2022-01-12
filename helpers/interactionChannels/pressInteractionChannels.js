@@ -149,10 +149,15 @@ module.exports = async (client, interaction) =>{
         })
         .then(() => {
             if (!tempInteractionChannels.length) {
-                return createChannel(guild, interactionFind.styleName, {
-                    type: 'GUILD_CATEGORY',
-                    position
-                })
+                return createChannel({
+                    guild, 
+                    name: interactionFind.styleName, 
+                    options: {
+                        type: 'GUILD_CATEGORY',
+                        position
+                    }
+                }
+                )
                 .then(category => {
                     return categoryInteraction = category.id || tempInteractionChannels[0].categoryInteraction
                 })
@@ -169,18 +174,21 @@ module.exports = async (client, interaction) =>{
             }
         })
         .then(() => {
-            return createChannel(guild, `${interactionFind.styleName} ${size + 1}`, {
+            return createChannel({guild, name: `${interactionFind.styleName} ${size + 1}`, 
+            options: {
                 parent: categoryInteraction,
-                permissionOverwrites: permissions.textChannel,
-            })
+                permissionOverwrites: permissions.textChannel
+            }})
             .then(channel => textInteraction = channel)
         })
         .then(() => {
-            return  createChannel(guild, `${interactionFind.styleName} ${size + 1}`, {
+            return  createChannel({guild, name: `${interactionFind.styleName} ${size + 1}`, 
+                options: {
                 parent: categoryInteraction,
                 type: 'GUILD_VOICE',
                 permissionOverwrites: permissions.voiceChannel,
                 userLimit: interactionFind.userLimit[0]
+                }
             })
             .then(channel => voiceInteraction = channel)
         })
