@@ -32,9 +32,9 @@ module.exports = class extends (
                     required: true
                 },
                 {
-                    name: "descripcion",
+                    name: "description",
                     description: "Envia una breve descripcion",
-                    type: "ROLE",
+                    type: "STRING",
                     required: true
                 },
                 {
@@ -129,10 +129,11 @@ module.exports = class extends (
             ],
             permBot: [ 
                 Permissions.FLAGS.MANAGE_CHANNELS,
+                Permissions.FLAGS.READ_MESSAGE_HISTORY,
+                Permissions.FLAGS.SEND_MESSAGES,
                 Permissions.FLAGS.MANAGE_MESSAGES,
                 Permissions.FLAGS.MANAGE_WEBHOOKS,
                 Permissions.FLAGS.VIEW_CHANNEL,
-                Permissions.FLAGS.READ_MESSAGE_HISTORY
             ],
             permUser: [
                 Permissions.FLAGS.MANAGE_GUILD
@@ -201,7 +202,7 @@ module.exports = class extends (
             })
         
         const dinamicEmbed = new MessageEmbed()
-            .setTitle(translate('createdinamicroom.reply'))
+            .setTitle(translate('createdinamicroom.reply.title'))
             .setDescription(translate('createdinamicroom.reply.description'))
             .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
             .setColor('YELLOW')
@@ -243,7 +244,7 @@ module.exports = class extends (
                 .then(category => {
                     return createChannel({
                         guild: interaction.guild, 
-                        name: translate('createdinamicroom.channel.panel'), 
+                        name: translate('createdinamicroom.channel.panel.name'), 
                         options: {
                             parent: category.id,
                             permissionOverwrites: [
@@ -278,7 +279,7 @@ module.exports = class extends (
                     .then( panel => {
                         return createChannel({
                             guild: interaction.guild, 
-                            name: translate('createdinamicroom.channel.rooms'), 
+                            name: translate('createdinamicroom.channel.rooms.name'), 
                             options: {
                                 parent: category.id
                             }
@@ -317,9 +318,9 @@ module.exports = class extends (
                         return result.panel.send({
                             embeds: [
                                 new MessageEmbed()
-                                    .setTitle(translate('createdinamicroom.channel.panel.channel', { category }))
+                                    .setTitle(translate('createdinamicroom.channel.panel.message.title', { category }))
                                     .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
-                                    .setDescription(translate('createdinamicroom.channel.panel.channel.description'))
+                                    .setDescription(translate('createdinamicroom.channel.panel.message.description'))
                                     .setColor(selectColor)
                                 ]
                         })
@@ -340,7 +341,7 @@ module.exports = class extends (
                                 awaiting: resultados.awaiting.id,
                                 panel: resultados.panel.id,
                                 category: resultados.category.id,
-                                viewRole: viewRole
+                                viewRole: viewRole || null
                             })
                 )
                 .then(() => {
@@ -362,10 +363,10 @@ module.exports = class extends (
                             dinamicEmbed
                                 .setColor('GREEN')
                                 .addField(translate('createdinamicroom.reply.edit.channels.title'), translate('createdinamicroom.reply.edit.channels.message', { 
-                                    awaiting: result.awaiting, 
-                                    panel: result.panel, 
-                                    interactor: result.interactor,
-                                    category: result.category,
+                                    awaiting: resultados.awaiting, 
+                                    panel: resultados.panel, 
+                                    interactor: resultados.interactor,
+                                    category: resultados.category,
                                 })) ]})
                 })
                 .then(() => {
@@ -378,6 +379,7 @@ module.exports = class extends (
                                 embeds: [errorEmbed.setDescription(`${err.message}`)] })
                         default:
                             console.error(`Guild: ${interaction.guild}, ${err}`)
+                            interaction.editReply('🟠 Error al crear las salas no fueron registradas.')
                     }
                     
                 })
