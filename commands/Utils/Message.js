@@ -186,7 +186,7 @@ module.exports = class extends (
                             .setTitle(title)
                             .setDescription(description)
                             .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
-                            .setFooter(`Solicitado por ${interaction.member}`)
+                            .setFooter(`Solicitado por ${interaction.member.displayName}`)
                             .setColor(color)
                             .setTimestamp()
                         ]
