@@ -163,7 +163,7 @@ module.exports = class extends (
                 embeds: [new MessageEmbed()
                     .setTitle(title)
                     .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
-                    .setFooter(`Solicitado por ${interaction.member}`)
+                    .setFooter(`Solicitado por ${interaction.member.displayName}`)
                     .setColor(color)
                     .setTimestamp()
                 ]
