@@ -1,6 +1,6 @@
 {
   "name": "tigerbot",
-  "version": "1.0.3Beta",
+  "version": "1.1.5Beta",
   "description": "Bot de gestion de comunidades",
   "main": "index.js",
   "scripts": {

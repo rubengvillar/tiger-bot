@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const { MessageActionRow, MessageButton, MessageEmbed } = require("discord.js");
+const { MessageActionRow, MessageButton, MessageEmbed, Permissions } = require("discord.js");
 const Command = require("../../Structures/Command");
 
 module.exports = class extends (
@@ -17,6 +17,9 @@ module.exports = class extends (
                 type: "ROLE",
                 required: true,
             }],
+            permUser: [
+                Permissions.FLAGS.MANAGE_GUILD,
+            ],
             default_permission: true
         });
     }

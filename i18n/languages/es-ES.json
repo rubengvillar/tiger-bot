@@ -41,7 +41,7 @@
             "content": "Salas dinamicas",
             "channels": {
               "title": "Canales creados",
-              "message": " {{ result.awaiting }} , {{ result.panel }}, {{ result.interactor }}. Dentro de la categoría **{{ result.category }}**"
+              "message": " {{ awaiting }} , {{ panel }}, {{ interactor }}. Dentro de la categoría **{{ category }}**"
             }
           }
         },
