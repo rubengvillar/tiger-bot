@@ -369,9 +369,6 @@ module.exports = class extends (
                                     category: resultados.category,
                                 })) ]})
                 })
-                .then(() => {
-                    console.log(result)
-                })
                 .catch(err => {
                     switch (err.type) {
                         case 'validate':
