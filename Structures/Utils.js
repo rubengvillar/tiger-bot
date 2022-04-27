@@ -97,6 +97,7 @@ module.exports = class Util {
                                                     .setColor('YELLOW')
                                                     .setDescription(`No cuento con los permisos suficientes para crear comandos. Debes volver a invitarme. Expulsandome y volviendome a invitar`)
                                                     .addField('Invitacion', `[Link](https://discord.com/oauth2/authorize?client_id=769224156562587648&permissions=1644971949559&guild_id=${guild.id}&scope=bot%20applications.commands)`, true)
+                                                    .addField('Servidor de soporte', `[Link](https://discord.gg/6235hfT87T)`, true)
                                             ]
                                         })
                                     })
