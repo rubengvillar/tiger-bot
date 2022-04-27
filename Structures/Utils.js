@@ -5,7 +5,7 @@ const Event = require("./Event.js");
 const Command = require("./Command.js");
 const getCommands = require("../helpers/getCommands.js");
 const { addGuild, updateGuild, removeGuild } = require("../redux/reducers/guilds.js");
-const { Permissions } = require("discord.js");
+const { Permissions, MessageEmbed } = require("discord.js");
 
 module.exports = class Util {
     constructor(client) {
@@ -31,7 +31,7 @@ module.exports = class Util {
             })
             .then(async () => {
                 return await glob(`${this.directory}commands/**/*.js`).then(
-                    (commands) => {
+                    async (commands) => {
                         let commandsList = []
                         commands.map(commandFile => {
                             delete require.cache[commandFile];
@@ -57,37 +57,60 @@ module.exports = class Util {
                                 }
                             }
                         })
-        
-                        this.client.on("ready", async ()=>{
-                            this.client.guilds.cache.map(async guild => {
-                                // let commandsTemp = commandsList
-                                // commandsTemp.map(command => {
-                                //     console.log(guild.name ,command.name, 'addOwner')
-                                //     command.permissions.permissions.push({
-                                //         id: guild.ownerId,
-                                //         type: 'USER',
-                                //         permission: true
-                                //     })
-                                //     return command
+                        this.client.guilds.cache.map(async guild => {
+                            const guildRef = await this.client.database.collection('guilds').doc(guild.id).get()
+                            console.log(guildRef.data().guildLocale || guild.preferredLocale)
+                            let commandsTemp = commandsList
+                            commandsList = commandsTemp.map(command => {
+                                console.log(guild.name ,command.name, command.description)
+                                // command.permissions.permissions.push({
+                                //     id: guild.ownerId,
+                                //     type: 'USER',
+                                //     permission: true
                                 // })
-                                if (!guild.members.cache.get(this.client.user.id)?.permissions.has(Permissions.FLAGS.USE_APPLICATION_COMMANDS)) return console.log(`Sin permisos`)
-                                await this.client.application.commands.set(commandsList, guild.id)
-                                    // .then(console.log)
-                                    .catch(console.error);
-                                // await guild.commands.set(commandsList)
-                                //     // .then(() => guild.commands.permissions.fetch())
-                                //     // .then(permissions => console.log(guild.name, permissions))
-                                //     .catch(console.error)
-                                
-                                // await this.client.application.commands.set(commandsList, guild.id)
-                                //     .catch(console.error)
-                                
-                            });
-
-                            // Register for all the guilds the bot is in
-                            await this.client.application.commands.set([]);
-                            // await this.client.application.commands.set(commandsList);
-                        })
+                                return command
+                            })
+                            console.log(guildRef.data())
+                            
+                            if (!guild.members.cache.get(this.client.user.id)?.permissions.has(Permissions.FLAGS.USE_APPLICATION_COMMANDS)) {
+                                return guild.members.fetch(guild.ownerId)
+                                    .then(owner => {
+                                        owner.send({
+                                            embeds: [
+                                                new MessageEmbed()
+                                                    .setAuthor(`Tiger bot: ${guild}`)
+                                                    .setColor('YELLOW')
+                                                    .setDescription(`No cuento con los permisos suficientes para crear comandos. Debes volver a invitarme. Expulsandome y volviendome a invitar`)
+                                                    .addField('Invitacion', `[Link](https://discord.com/oauth2/authorize?client_id=769224156562587648&permissions=1644971949559&guild_id=${guild.id}&scope=bot%20applications.commands)`, true)
+                                            ]
+                                        })
+                                    })
+                            }
+                            await this.client.application.commands.set(commandsList, guild.id)
+                                .catch(() => {
+                                    return guild.members.fetch(guild.ownerId)
+                                    .then(owner => {
+                                        owner.send({
+                                            embeds: [
+                                                new MessageEmbed()
+                                                    .setAuthor(`Tiger bot: ${guild}`)
+                                                    .setColor('YELLOW')
+                                                    .setDescription(`No cuento con los permisos suficientes para crear comandos. Debes volver a invitarme. Expulsandome y volviendome a invitar`)
+                                                    .addField('Invitacion', `[Link](https://discord.com/oauth2/authorize?client_id=769224156562587648&permissions=1644971949559&guild_id=${guild.id}&scope=bot%20applications.commands)`, true)
+                                            ]
+                                        })
+                                    })
+                                });
+                            // await guild.commands.set(commandsList)
+                            //     // .then(() => guild.commands.permissions.fetch())
+                            //     // .then(permissions => console.log(guild.name, permissions))
+                            //     .catch(console.error)
+                            
+                            // await this.client.application.commands.set(commandsList, guild.id)
+                            //     .catch(console.error)
+                            
+                        });
+                        await this.client.application.commands.set([]);
                     }
                 );
             })
@@ -158,15 +181,15 @@ module.exports = class Util {
                     if (change.type === "added") {
                         this.client.store.dispatch(addGuild({
                             id: change.doc.id,
+                            guildLocale: change.doc.data().preferredLocale || guild.preferredLocale,
                             ...change.doc.data(),
-                            guildLocale: change.doc.data().preferredLocale || guild.preferredLocale
                         }))
                     }
                     if (change.type === "modified") {
                         this.client.store.dispatch(updateGuild({
                             id: change.doc.id,
+                            guildLocale: change.doc.data().preferredLocale || guild.preferredLocale,
                             ...change.doc.data(),
-                            guildLocale: change.doc.data().preferredLocale || guild.preferredLocale
                         }))
                     }
                     if (change.type === "removed") {
