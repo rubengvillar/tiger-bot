@@ -46,7 +46,7 @@ module.exports = class extends (
 
         // validate options:
         if (!(!!emoji.match(/<a?:.+?:\d+>/) || !!emoji.match(/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g))) return interaction.editReply(translate('adddinamicroom.invalid.emoji'))
-        if (userslimit.match(/\d,+/)) return interaction.editReply('userslimit: En esta opcion solo admito numeros.')
+        if (!userslimit.match(/(\d\,?)+/)) return interaction.editReply('userslimit: En esta opcion solo admito numeros.')
 
         // usersLimit to array:
         let userLimit = userslimit.split(',')
@@ -65,6 +65,9 @@ module.exports = class extends (
                     if(reactionVoices.empty){
                         return interaction.editReply('No tengo registradas salas dinámicas.')
                     }
+                    
+                    if(reactionVoices.docs.lenght >= 24) return interaction.editReply('El maximo permitido es de 25 salas')
+
                     let messageChannelsDinamicsOptions = await reactionVoices.docs.map(doc => {
                         return {
                                 label: `${doc.data().title}`,
