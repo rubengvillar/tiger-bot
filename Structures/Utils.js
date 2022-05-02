@@ -86,22 +86,26 @@ module.exports = class Util {
                                         })
                                     })
                             }
-                            await this.client.application.commands.set(commandsList, guild.id)
-                                .catch(() => {
-                                    return guild.members.fetch(guild.ownerId)
-                                    .then(owner => {
-                                        owner.send({
-                                            embeds: [
-                                                new MessageEmbed()
-                                                    .setAuthor(`Tiger bot: ${guild}`)
-                                                    .setColor('YELLOW')
-                                                    .setDescription(`No cuento con los permisos suficientes para crear comandos. Debes volver a invitarme. Expulsandome y volviendome a invitar`)
-                                                    .addField('Invitacion', `[Link](https://discord.com/oauth2/authorize?client_id=769224156562587648&permissions=1644971949559&guild_id=${guild.id}&scope=bot%20applications.commands)`, true)
-                                                    .addField('Servidor de soporte', `[Link](https://discord.gg/6235hfT87T)`, true)
-                                            ]
+                            return this.client.application.commands.set([], guild.id)
+                                .then(() => 
+                                this.client.application.commands.set(commandsList, guild.id)
+                                    .catch(() => {
+                                        return guild.members.fetch(guild.ownerId)
+                                        .then(owner => {
+                                            owner.send({
+                                                embeds: [
+                                                    new MessageEmbed()
+                                                        .setAuthor(`Tiger bot: ${guild}`)
+                                                        .setColor('YELLOW')
+                                                        .setDescription(`No cuento con los permisos suficientes para crear comandos. Debes volver a invitarme. Expulsandome y volviendome a invitar`)
+                                                        .addField('Invitacion', `[Link](https://discord.com/oauth2/authorize?client_id=769224156562587648&permissions=1644971949559&guild_id=${guild.id}&scope=bot%20applications.commands)`, true)
+                                                        .addField('Servidor de soporte', `[Link](https://discord.gg/6235hfT87T)`, true)
+                                                ]
+                                            })
                                         })
                                     })
-                                });
+                                )
+                            
                             // await guild.commands.set(commandsList)
                             //     // .then(() => guild.commands.permissions.fetch())
                             //     // .then(permissions => console.log(guild.name, permissions))
@@ -111,7 +115,7 @@ module.exports = class Util {
                             //     .catch(console.error)
                             
                         });
-                        await this.client.application.commands.set([]);
+                        
                     }
                 );
             })

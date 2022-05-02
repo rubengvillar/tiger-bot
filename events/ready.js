@@ -49,6 +49,6 @@ module.exports = class extends (
         
         loaderInteractionChannels(this.client)
         loaderTempChannels(this.client)
-        this.client.utils.loadCommands()
+        // this.client.utils.loadCommands()
     }
 };
