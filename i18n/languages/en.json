@@ -1,8 +1,85 @@
 {
     "translation": {
-      "hello": "hello",
-      "help.title": "Help menu",
-      "help.description": "These are the commands available to {{ guild }}",
-      "help.slashcommands": "Now all my commands are with: "
+      "help": {
+        "title": "Help Menu",
+        "description": "These are the commands available for {{ guild }}",
+        "slashcommands": "Now all my commands are with: ",
+        "command": {
+          "title": "Command help: {{ command }}",
+          "description": "❯ Description: {{ description }} \n ❯ Example: {{ example }} \n ❯ Category: {{ category }} \n ❯ Usage: {{ usage }}",
+          "existed": "The command name {{ command }} does not exist."
+        }
+      },
+
+      "ping" : {
+        "load": "Ping...",
+        "checking": "Checking...",
+        "response": {
+          "one": "Is this really my ping?",
+          "two": "Okay? I can't watch!",
+          "three": "I hope it's not bad!"
+        }
+      },
+
+      "adddynamicroom": {
+        "invalid" : {
+          "emoji": "⚠️ The information entered does not correspond to a valid emoji",
+          "userlimit": "⚠️ userslimit: In this option I only accept numbers.",
+          "notrooms": "⚠️ I have no dynamic rooms registered."
+        },
+        "newroom": "Emoji: {{ emoji }}, Name: {{ room }}, Users: {{ userLimit }}",
+        "selectdinamicroom": "Select where you want to add the room",
+        "success": "   The room was added successfully"
+      },
+
+      "createddynamicroom" : {
+        "invalid": {
+          "option": "⚠️ Invalid option",
+          "emoji.default": "⚠️ The sent emoji does not belong to the discord default emoji."
+        }
+      },
+      "reply": {
+        "title": "Dynamic rooms.",
+        "description": "Now I am going to create the dynamic rooms as you indicate.",
+        "edit": {
+          "content": "Dynamic rooms",
+          "channels": {
+            "title": "Channels created",
+            "message": " {{ result.awaiting }} , {{ result.panel }}, {{ result.interactor }}. Within category {{ result.category }}"
+          }
+        }
+      },
+
+      "channel": {
+        "panel": {
+          "channel": " Dashboard",
+          "message": {
+            "title": "Control Panel for: {{ category }}",
+            "description": "These options are under development and will be ready soon."
+          }
+        },
+        "rooms": {
+          "name": " Dynamic Rooms",
+          "message": {
+            "title": "Select a room from: {{ category }}",
+            "use": {
+              "title": "Usage: ",
+              "message": "To create a room, connect to {{ awaiting }} and press the button of the room you want to create."
+            }
+          }
+        },
+        "waiting": " Waiting room"
+      },
+
+    "notdinamicrooms": "I have no dynamic rooms registered",
+    "selectroom": "Select a room",
+
+    "removedinamicroom": {
+      "content.selectroom": "Where do you want to remove rooms from?",
+      "selectroom": "Select a room",
+      "limitUsers" : "User limits: {{ limitUsers }}",
+      "select.remove.romms": "Choose the rooms to remove.",
+      "removed.rooms": " - Selected reactions have been removed."
     }
+  }
 }

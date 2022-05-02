@@ -85,6 +85,12 @@
         "success": "El rol fue añadido con exito."
       },
 
+      "deletedinamicrooms": {
+        "content": "¿Cual es la sala que deseas eliminar?",
+        "select": "Selecciona una sala dinamica",
+        "success": "La sala fue eliminada de la base de datos correctamente."
+      },
+
       "streamdinamicroom": {
         "content_true": "Donde podran prender camara o compartir pantalla",
         "content_false": "Donde no podran prender camara o compartir pantalla",
