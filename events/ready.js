@@ -46,7 +46,9 @@ module.exports = class extends (
         // this.client.utils.loadSugestions();
         // // LoaderReactionVoices
         // await this.client.utils.createGuilds(this.client.guilds);
+        
         loaderInteractionChannels(this.client)
         loaderTempChannels(this.client)
+        this.client.utils.loadCommands()
     }
 };

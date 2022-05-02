@@ -18,7 +18,6 @@ module.exports.Bot = class Bot extends (
         this.globalCommands = new Collection();
         this.aliases = new Collection();
         this.utils.loadEvents()
-        this.utils.loadCommands()
         this.store = store
         this.database = firebase
         this.language = i18n
