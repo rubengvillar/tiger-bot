@@ -6,6 +6,8 @@ const Command = require("./Command.js");
 const getCommands = require("../helpers/getCommands.js");
 const { addGuild, updateGuild, removeGuild } = require("../redux/reducers/guilds.js");
 const { Permissions, MessageEmbed } = require("discord.js");
+const { REST } = require('@discordjs/rest');
+const { Routes } = require('discord-api-types/v9');
 
 module.exports = class Util {
     constructor(client) {
@@ -25,6 +27,9 @@ module.exports = class Util {
     }
 
     async loadCommands() {
+        console.log('This:', this.token)
+        console.log('Client:', this.client.token)
+        const rest = new REST({ version: '9' }).setToken(this.client.token);
         getCommands()
             .then(async commandsNames => {
                 this.client.commandsNames = commandsNames
@@ -86,9 +91,14 @@ module.exports = class Util {
                                         })
                                     })
                             }
-                            return this.client.application.commands.set([], guild.id)
-                                .then(() => 
-                                this.client.application.commands.set(commandsList, guild.id)
+
+                            return rest.put(
+                                Routes.applicationGuildCommands(this.client.id, guild.id),
+                                { body: [] },
+                                ).then(() => rest.put(
+                                    Routes.applicationGuildCommands(this.client.id, guild.id),
+                                    { body: commandsList },
+                                )
                                     .catch(() => {
                                         return guild.members.fetch(guild.ownerId)
                                         .then(owner => {
@@ -104,7 +114,9 @@ module.exports = class Util {
                                             })
                                         })
                                     })
-                                )
+                                ).catch(console.error)
+
+                                
                             
                             // await guild.commands.set(commandsList)
                             //     // .then(() => guild.commands.permissions.fetch())
