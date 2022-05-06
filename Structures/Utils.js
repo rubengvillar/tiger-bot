@@ -91,11 +91,11 @@ module.exports = class Util {
                                         })
                                     })
                             }
-
-                            return rest.put(
+                            await rest.put(
                                 Routes.applicationGuildCommands(this.client.id, guild.id),
                                 { body: [] },
-                                ).then(() => rest.put(
+                                )
+                            return rest.put(
                                     Routes.applicationGuildCommands(this.client.id, guild.id),
                                     { body: commandsList },
                                 )
@@ -114,7 +114,7 @@ module.exports = class Util {
                                             })
                                         })
                                     })
-                                ).catch(console.error)
+                                .catch(console.error)
 
                                 
                             
