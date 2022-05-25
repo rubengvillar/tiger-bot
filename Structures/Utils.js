@@ -27,9 +27,9 @@ module.exports = class Util {
     }
 
     async loadCommands() {
-        console.log('This:', this.token)
-        console.log('Client:', this.client.token)
-        const rest = new REST({ version: '9' }).setToken(this.client.token);
+        // console.log('Client Token:', this.client.token)
+        // const clientId = this.client.user.id
+        // const rest = new REST({ version: '9' }).setToken(this.client.token);
         getCommands()
             .then(async commandsNames => {
                 this.client.commandsNames = commandsNames
@@ -62,12 +62,13 @@ module.exports = class Util {
                                 }
                             }
                         })
+
                         this.client.guilds.cache.map(async guild => {
                             const guildRef = await this.client.database.collection('guilds').doc(guild.id).get()
-                            console.log(guildRef.data().guildLocale || guild.preferredLocale)
+                            // console.log(guildRef.data().guildLocale || guild.preferredLocale)
                             let commandsTemp = commandsList
                             commandsList = commandsTemp.map(command => {
-                                console.log(guild.name ,command.name, command.description)
+                                // console.log(guild.name ,command.name, command.description)
                                 // command.permissions.permissions.push({
                                 //     id: guild.ownerId,
                                 //     type: 'USER',
@@ -75,7 +76,7 @@ module.exports = class Util {
                                 // })
                                 return command
                             })
-                            console.log(guildRef.data())
+                            // console.log(guildRef.data())
                             
                             if (!guild.members.cache.get(this.client.user.id)?.permissions.has(Permissions.FLAGS.USE_APPLICATION_COMMANDS)) {
                                 return guild.members.fetch(guild.ownerId)
@@ -83,7 +84,7 @@ module.exports = class Util {
                                         owner.send({
                                             embeds: [
                                                 new MessageEmbed()
-                                                    .setAuthor(`Tiger bot: ${guild}`)
+                                                    .setTitle(`Tiger bot: ${guild}`)
                                                     .setColor('YELLOW')
                                                     .setDescription(`No cuento con los permisos suficientes para crear comandos. Debes volver a invitarme. Expulsandome y volviendome a invitar`)
                                                     .addField('Invitacion', `[Link](https://discord.com/oauth2/authorize?client_id=769224156562587648&permissions=1644971949559&guild_id=${guild.id}&scope=bot%20applications.commands)`, true)
@@ -91,42 +92,54 @@ module.exports = class Util {
                                         })
                                     })
                             }
-                            await rest.put(
-                                Routes.applicationGuildCommands(this.client.id, guild.id),
-                                { body: [] },
-                                )
-                            return rest.put(
-                                    Routes.applicationGuildCommands(this.client.id, guild.id),
-                                    { body: commandsList },
-                                )
-                                    .catch(() => {
-                                        return guild.members.fetch(guild.ownerId)
-                                        .then(owner => {
-                                            owner.send({
-                                                embeds: [
-                                                    new MessageEmbed()
-                                                        .setAuthor(`Tiger bot: ${guild}`)
-                                                        .setColor('YELLOW')
-                                                        .setDescription(`No cuento con los permisos suficientes para crear comandos. Debes volver a invitarme. Expulsandome y volviendome a invitar`)
-                                                        .addField('Invitacion', `[Link](https://discord.com/oauth2/authorize?client_id=769224156562587648&permissions=1644971949559&guild_id=${guild.id}&scope=bot%20applications.commands)`, true)
-                                                        .addField('Servidor de soporte', `[Link](https://discord.gg/6235hfT87T)`, true)
-                                                ]
-                                            })
-                                        })
-                                    })
-                                .catch(console.error)
+                            
+                            // await rest.put(
+                            //     Routes.applicationGuildCommands(clientId, guild.id),
+                            //     { body: [] },
+                            //     )
+                            
+                            // return rest.put(
+                            //         Routes.applicationGuildCommands(clientId, guild.id),
+                            //         { body: commandsList },
+                            //     )
+                            //         .catch(err => {
+                            //             console.error('Errores',err)
+                            //             return guild.members.fetch(guild.ownerId)
+                            //             .then(owner => {
+                            //                 owner.send({
+                            //                     embeds: [
+                            //                         new MessageEmbed()
+                            //                             .setTitle(`Tiger bot: ${guild}`)
+                            //                             .setColor('YELLOW')
+                            //                             .setDescription(`No cuento con los permisos suficientes para crear comandos. Debes volver a invitarme. Expulsandome y volviendome a invitar`)
+                            //                             .addField('Invitacion', `[Link](https://discord.com/oauth2/authorize?client_id=769224156562587648&permissions=1644971949559&guild_id=${guild.id}&scope=bot%20applications.commands)`, true)
+                            //                             .addField('Servidor de soporte', `[Link](https://discord.gg/6235hfT87T)`, true)
+                            //                     ]
+                            //                 })
+                            //             })
+                            //         })
+                            //     .catch(console.error)
 
                                 
                             
-                            // await guild.commands.set(commandsList)
-                            //     // .then(() => guild.commands.permissions.fetch())
-                            //     // .then(permissions => console.log(guild.name, permissions))
-                            //     .catch(console.error)
+                            await guild.commands.set([])
+                                // .then(console.log)
+                                .catch(console.error);
                             
                             // await this.client.application.commands.set(commandsList, guild.id)
                             //     .catch(console.error)
                             
                         });
+
+                        return await this.client.application.commands.set(commandsList)
+                            .then(console.log)
+                            .catch(console.error);
+                        
+                        // return rest.put(
+                        //     Routes.applicationCommands(clientId),
+                        //     { body: commandsList },
+                        // )
+                        // .catch(console.error)
                         
                     }
                 );
