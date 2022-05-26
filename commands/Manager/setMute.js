@@ -7,9 +7,8 @@ module.exports = class extends (
 ) {
     constructor(...args) {
         super(...args, {
-            aliases: ["pong"],
             category: "Manager",
-            usage: "[setmute]",
+            usage: "/setmute",
             description: "configura el rol para los usuarios muteados o sancionados",
             options: [{
                 name: "role",

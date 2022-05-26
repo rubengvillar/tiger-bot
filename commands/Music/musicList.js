@@ -9,7 +9,7 @@ module.exports = class extends (
         super(...args, {
             description: "Muestra una lista de bots para saber si estan conectados a un canal de voz.",
             category: "Music",
-            usage: "[music]",
+            usage: "/musiclist",
             default_permission: true
         });
     }

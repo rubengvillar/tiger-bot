@@ -7,8 +7,8 @@ module.exports = class extends (
 ) {
     constructor(...args) {
         super(...args, {
-            category: "Musica",
-            usage: "[addbotmusica]",
+            category: "Music",
+            usage: "/addbotmusica",
             description: "Añade bot de musica.",
             options: [{
                 name: "bot",

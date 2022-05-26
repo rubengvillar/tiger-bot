@@ -7,8 +7,7 @@ module.exports = class extends (
 ) {
     constructor(...args) {
         super(...args, {
-            aliases: ["pong"],
-            category: "Manager",
+            category: "Utils",
             usage: "/message",
             description: "Crea un mensaje como si el propio server lo enviara.",
             options: [

@@ -7,7 +7,6 @@ module.exports = class extends (
 ) {
     constructor(...args) {
         super(...args, {
-            aliases: ["pong"],
             category: "Información",
             usage: "[ping]",
             description: "Muestra el ping del bot y la api de discord"
