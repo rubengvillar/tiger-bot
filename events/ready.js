@@ -2,6 +2,7 @@
 const loaderInteractionChannels = require("../helpers/loaderInteractionChannels");
 const loaderTempChannels = require("../helpers/loaderTempChannels");
 const Event = require("../Structures/Event");
+const { version } = require('../package.json')
 
 module.exports = class extends (
     Event
@@ -15,7 +16,7 @@ module.exports = class extends (
     async run() {
         console.log(
             [
-                `Loaded ${this.client.globalCommands.size} commands!`,
+                // `Loaded ${this.client.globalCommands.size} commands!`,
                 `Loaded ${this.client.events.size} events!`,
                 `Logged in as ${this.client.user.tag}`,
             ].join("\n")
@@ -23,8 +24,9 @@ module.exports = class extends (
 
         let activities = [
             () => `${this.client.guilds.cache.size} servidores!`,
-            () => `${this.client.channels.cache.size} canales!`,
-            () => `${this.client.store.getState().tempInteractionChannels.length} Salas Dinamicas`,
+            () => `la version: ${version}`,
+            // () => `${this.client.channels.cache.size} canales!`,
+            // () => `${this.client.store.getState().tempInteractionChannels.length} Salas Dinamicas`,
             () => `${this.client.guilds.cache.reduce(
                 (a, b) => a + b.memberCount,
                 0
