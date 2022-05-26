@@ -78,20 +78,20 @@ module.exports = class Util {
                             })
                             // console.log(guildRef.data())
                             
-                            if (!guild.members.cache.get(this.client.user.id)?.permissions.has(Permissions.FLAGS.USE_APPLICATION_COMMANDS)) {
-                                return guild.members.fetch(guild.ownerId)
-                                    .then(owner => {
-                                        owner.send({
-                                            embeds: [
-                                                new MessageEmbed()
-                                                    .setTitle(`Tiger bot: ${guild}`)
-                                                    .setColor('YELLOW')
-                                                    .setDescription(`No cuento con los permisos suficientes para crear comandos. Debes volver a invitarme. Expulsandome y volviendome a invitar`)
-                                                    .addField('Invitacion', `[Link](https://discord.com/oauth2/authorize?client_id=769224156562587648&permissions=1644971949559&guild_id=${guild.id}&scope=bot%20applications.commands)`, true)
-                                            ]
-                                        })
-                                    })
-                            }
+                            // if (!guild.members.cache.get(this.client.user.id)?.permissions.has(Permissions.FLAGS.USE_APPLICATION_COMMANDS)) {
+                            //     return guild.members.fetch(guild.ownerId)
+                            //         .then(owner => {
+                            //             owner.send({
+                            //                 embeds: [
+                            //                     new MessageEmbed()
+                            //                         .setTitle(`Tiger bot: ${guild}`)
+                            //                         .setColor('YELLOW')
+                            //                         .setDescription(`No cuento con los permisos suficientes para crear comandos. Debes volver a invitarme. Expulsandome y volviendome a invitar`)
+                            //                         .addField('Invitacion', `[Link](https://discord.com/oauth2/authorize?client_id=769224156562587648&permissions=1644971949559&guild_id=${guild.id}&scope=bot%20applications.commands)`, true)
+                            //                 ]
+                            //             })
+                            //         })
+                            // }
                             
                             // await rest.put(
                             //     Routes.applicationGuildCommands(clientId, guild.id),
