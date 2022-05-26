@@ -42,7 +42,7 @@ module.exports = async (client, interaction) =>{
     
     if (!interactionFind) return
     
-    return hilo = await interaction.deferReply({ ephemeral: false })
+    return hilo = await interaction.deferReply({ ephemeral: true })
         .then(() => client.guilds.fetch(guildId))
         .then(guildFetch => {
             if (guildFetch === undefined) throw new Error('Servidor no encontrado...')
@@ -105,7 +105,7 @@ module.exports = async (client, interaction) =>{
             if (!interactionFind) return
         })
         .then(() => {
-            name = interactionFind.emoji.replace(/[^0-9]+/g,'').trim() === '' 
+            name = interactionFind.emoji.replace(/[^0-9]+/g,'') == '' 
             ? `${interactionFind.emoji} | ${interactionFind.category}` 
             : `${interactionFind.defaultEmoji} | ${interactionFind.category}`
         })
@@ -139,7 +139,7 @@ module.exports = async (client, interaction) =>{
                     allow: [Permissions.FLAGS.VIEW_CHANNEL],
                 })
             }
-            
+            console.log(interactionFind.stream)
             if (!interactionFind.stream) denyPermissions.add('STREAM')
 
             permissions.voiceChannel.push({
@@ -265,7 +265,21 @@ module.exports = async (client, interaction) =>{
         })
         .then(async () => {
             await wait(4000)
-            return interaction.deleteReply()
+            console.log(this.client)
+            interaction.editReply({
+                constent: ``,
+                embeds: [
+                    new MessageEmbed()
+                        .setAuthor({
+                            name: `${client.user.username}`
+                        })
+                        .setThumbnail(client.user.avatarURL({ dynamic: true }))
+                        .setDescription('Hola cachorrito. Voy a pedirte que para **seguir con vida** votes por mi.')
+                        .addField('Vota en Top.gg', '[Deja tu voto](https://top.gg/bot/769224156562587648/vote)', true)
+                        .addField('Server de soporte', '[Invitación](https://discord.gg/RAK5jbzZZp)', true)
+                        .setColor('RANDOM')
+                ]
+            })
         })
         .catch(async err => {
             if (err.type === 'validate') {

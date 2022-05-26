@@ -27,7 +27,7 @@ module.exports = (client) => {
                                     client.store.dispatch(addInteractionsChannels({
                                         guildId: guildCache.id,
                                         channelId: queryChange.doc.data().channelID,
-                                        stream: (typeof queryChange.doc.data().stream === Boolean) ? queryChange.doc.data().stream : false,
+                                        stream: (typeof queryChange.doc.data().stream === 'boolean') ? queryChange.doc.data().stream : false,
                                         interactionId: change.doc.id,
                                         ...change.doc.data(),
                                         defaultEmoji: change.doc.data().emoji.replace(/[^0-9]+/g,'') != '' ? queryChange.doc.data().defaultEmoji || '🙂' : change.doc.data().emoji,
@@ -39,17 +39,16 @@ module.exports = (client) => {
                                 }
 
                                 if (change.type === "modified") {
-                                    console.log(typeof queryChange.doc.data().stream === Boolean)
                                     let emoji = change.doc.data().emoji.replace(/[^0-9]+/g,'') != '' ? queryChange.doc.data().defaultEmoji || '🙂' : change.doc.data().emoji
                                     client.store.dispatch(updateInteractionsChannels({
                                         guildId: guildCache.id,
                                         channelId: queryChange.doc.data().channelID,
-                                        stream: (typeof queryChange.doc.data().stream === Boolean) ? queryChange.doc.data().stream : false,
+                                        stream: (typeof queryChange.doc.data().stream === 'boolean') ? queryChange.doc.data().stream : false,
                                         interactionId: change.doc.id,
                                         ...change.doc.data(),
                                         defaultEmoji: change.doc.data().emoji.replace(/[^0-9]+/g,'') != '' ? queryChange.doc.data().defaultEmoji || '🙂' : change.doc.data().emoji,
                                         styleName: queryChange.doc.data().styleName ? 
-                                        queryChange.doc.data().styleName.replace('{interaction:emoji}', emoji || queryChange.doc.data().defaultEmoji || '🙂').replace('{interaction:name}', change.doc.data().category)
+                                        queryChange.doc.data().styleName.replace('{interaction:emoji}', emoji ||  queryChange.doc.data().defaultEmoji || '🙂').replace('{interaction:name}', change.doc.data().category)
                                         : `${emoji} | ${change.doc.data().category}`,
                                         viewRole: queryChange.doc.data().viewRole || undefined                                   
                                     }))
@@ -70,7 +69,7 @@ module.exports = (client) => {
                                 .setThumbnail(message.guild.iconURL({ dynamic: true }))
                                 .setColor(queryChange.doc.data().color)
                                 .setImage(guild.bannerURL())
-                                .setFooter(`Salas dinamicas para: ${guild}`)
+                                .setFooter({text: `Salas dinamicas para: ${guild}`})
                                 .addField(`Pueden entrar:`, `<@&${queryChange.doc.data().viewRole || guild.id}>`, true)
                                 .addField('Stream o Camara:', queryChange.doc.data().stream ? 'Si' : 'No', true)
                                 .setTimestamp()

@@ -132,7 +132,7 @@ module.exports = class Util {
                         });
 
                         return await this.client.application.commands.set(commandsList)
-                            .then(console.log)
+                            .then(loaded => console.log(`Comandos cargados`))
                             .catch(console.error);
                         
                         // return rest.put(
