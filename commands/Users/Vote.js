@@ -46,7 +46,7 @@ module.exports = class extends (
                 if (resp.voted) {
                     return interaction.editReply({ 
                         embeds: [voted
-                            .setDescription('Gracias por haber votado por mi!')
+                            .setDescription('Gracias por votar por mi!')
                             .setColor('GREEN')
                         ]
                     })
