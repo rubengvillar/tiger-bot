@@ -291,8 +291,6 @@ module.exports = async (client, interaction) =>{
                         .setColor('YELLOW')
                         .setDescription(`${err.message}`)
                     ]})
-                await wait(4000)
-                return await interaction.deleteReply()
             }
 
             console.error(`Guild: ${interaction.guild}, ${err}`)
